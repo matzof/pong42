@@ -1,18 +1,20 @@
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
-from torch.distributions import Normal
+from torch.distributions import Categorical
+from utils import Transition, ReplayMemory, extract_state
+
 
 
 class Policy(torch.nn.Module):
-    def __init__(self, state_space, action_space):
+    def __init__(self, state_space = 4, action_space = 3):
         super().__init__()
         self.state_space = state_space
         self.action_space = action_space
-        self.hidden = 64
+        self.hidden = 128 #64
         self.fc1 = torch.nn.Linear(state_space, self.hidden)
+        self.fc2 = torch.nn.Linear(self.hidden, action_space)
         self.fc3 = torch.nn.Linear(self.hidden, 1)
-        self.fc2_mean = torch.nn.Linear(self.hidden, action_space)
-        self.sigma = torch.nn.Parameter(torch.zeros(1) + 10)  # TODO: learn sigma as parameter (T2)
         self.init_weights()
 
     def init_weights(self):
@@ -24,13 +26,7 @@ class Policy(torch.nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = F.relu(x)
-        mu = self.fc2_mean(x)
-        sigma = F.softplus(self.sigma)  # use softplus to avoid errors with negative values of sigma
-
-        # TODO: Instantiate and return a normal distribution
-        # with mean mu and std of sigma (T1)
-        policy_dist = Normal(mu, sigma)
-        # TODO: Add a layer for state value calculation (T3)
+        policy_dist = Categorical(self.fc2(x))
         value = self.fc3(x)
         return value, policy_dist
 
@@ -77,19 +73,18 @@ class Agent(object):
 
         # TODO: Pass state x through the policy network (T1)
         value, action_distribution = self.policy.forward(x)
+        action = action_distribution.sample()
 
-        # TODO: Return mean if evaluation, else sample from the distribution returned by the policy (T1)
-        if evaluation:
-            action = action_distribution.mean()
-        else:
-            action = action_distribution.sample()
         # TODO: Calculate the log probability of the action (T1)
         act_log_prob = action_distribution.log_prob(action)
         # TODO: Return state value prediction, and/or save it somewhere (T3)
         self.values.append(torch.Tensor(value))
         return action, act_log_prob
 
-    def store_outcome(self, observation, action_prob, action_taken, reward):
-        self.states.append(observation)
+    def store_transition(self, state, action_prob, action_taken, reward, model):
+        state = extract_state(state, model)
+
+        self.states.append(state)
         self.action_probs.append(action_prob)
         self.rewards.append(torch.Tensor([reward]))
+
