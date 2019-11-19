@@ -13,9 +13,7 @@ env = gym.make("WimblepongVisualMultiplayer-v0")
 # %%
 # Parameters
 render = False
-env.unwrapped.scale = 2
-env.unwrapped.fps = 10000
-episodes = 10000
+episodes = 100000
 glie_a = episodes / 20
 num_episodes = 1000
 TARGET_UPDATE = 20
