@@ -12,7 +12,7 @@ from keras.models import load_model
 env = gym.make("WimblepongVisualMultiplayer-v0")
 # %%
 # Parameters
-render = True
+render = False
 env.unwrapped.scale = 2
 env.unwrapped.fps = 10000
 episodes = 10000
@@ -57,6 +57,7 @@ for ep in range(episodes):
             print("episode {} over. Length ep: {}. Broken WR: {:.3f}".format(ep,
                                                                              length_ep, win1 / (ep + 1)))
     length_history.append(length_ep)
+#    plot_rewards(length_history)
 
 
 
