@@ -56,7 +56,7 @@ for ep in range(episodes):
             print("episode {} over. Length ep: {}. Broken WR: {:.3f}".format(ep, 
                                               length_ep, win1/(ep+1)))
     length_history.append(length_ep)
-    plot_rewards(length_history)
+    # plot_rewards(length_history)
     
     # Update the target network, copying all weights and biases in DQN
     if ep % TARGET_UPDATE == 0:
