@@ -1,6 +1,6 @@
 """Created by Matzof on Sat Nov 16 22:23:22 2019"""
 from dqn_agent import Agent as DQNAgent
-from agent_ac import Agent as
+from agent_ac import Agent as ACagent
 from utils import extract_state
 #%%
 class AI42(object):
@@ -12,7 +12,7 @@ class AI42(object):
         # only in straight lines
         self.bpe = 4                
         self.name = "AI42"
-        self.agent = DQNAgent(4, 3, replay_buffer_size=50000,
+        self.agent = ACagent(4, 3, replay_buffer_size=50000,
                  batch_size=32, hidden_size=12, gamma=0.98)
 
     def get_name(self):
@@ -21,14 +21,14 @@ class AI42(object):
         """
         return self.name
 
-    def get_action(self, ob, epsilon, model):
+    def get_action(self, ob, model):
         """
         Interface function that returns the action that the agent took based
         on the observation ob
         """
         state = extract_state(ob, model)
-        action = self.agent.get_action(state, epsilon)
-        return action
+        action, action_probabilities = self.agent.get_action(state)
+        return action, action_probabilities
 
     def reset(self):
         # Nothing to done for now...
