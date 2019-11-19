@@ -12,7 +12,7 @@ from keras.models import load_model
 env = gym.make("WimblepongVisualMultiplayer-v0")
 # %%
 # Parameters
-render = False
+render = True
 env.unwrapped.scale = 2
 env.unwrapped.fps = 10000
 episodes = 10000
@@ -39,7 +39,7 @@ for ep in range(episodes):
     while not done:
         # Get the actions from both SimpleAIs
         action1, action_probabilities1 = player.get_action(ob1, model)
-        action2, _ = opponent.get_action(ob2)
+        action2 = opponent.get_action()
         # Step the environment and get the rewards and new observations
         previous_state1 = ob1
         (ob1, ob2), (rew1, rew2), done, info = env.step((action1, action2))
@@ -58,15 +58,6 @@ for ep in range(episodes):
                                                                              length_ep, win1 / (ep + 1)))
     length_history.append(length_ep)
     plot_rewards(length_history)
-
-    # Update the target network, copying all weights and biases in DQN
-    if ep % TARGET_UPDATE == 0:
-        player.agent.update_target_network()
-    # Save the policy
-    if ep % 1000 == 0:
-        torch.save(player.agent.policy_net.state_dict(),
-                   "weights_%s_%d.mdl" % ('wimblepong', ep))
-
 
 
 

@@ -1,8 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.distributions import Categorical
+from torch.distributions.categorical import Categorical
 from utils import Transition, ReplayMemory, extract_state
+import random
 
 
 
@@ -26,9 +27,9 @@ class Policy(torch.nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = F.relu(x)
-        policy_dist = Categorical(self.fc2(x))
+        probs = F.softmax(self.fc2(x))
         value = self.fc3(x)
-        return value, policy_dist
+        return value, probs
 
 class Agent(object):
     def __init__(self, policy, baseline=0):
@@ -73,7 +74,9 @@ class Agent(object):
 
         # TODO: Pass state x through the policy network (T1)
         value, action_distribution = self.policy.forward(x)
+        action_distribution = Categorical(action_distribution)
         action = action_distribution.sample()
+
 
         # TODO: Calculate the log probability of the action (T1)
         act_log_prob = action_distribution.log_prob(action)
