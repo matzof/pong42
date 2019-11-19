@@ -27,7 +27,7 @@ class Policy(torch.nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = F.relu(x)
-        probs = F.softmax(self.fc2(x))
+        probs = F.softmax(self.fc2(x), 0)
         value = self.fc3(x)
         return value, probs
 
