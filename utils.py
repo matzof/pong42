@@ -3,6 +3,7 @@ from collections import namedtuple
 import torch
 import matplotlib.pyplot as plt
 import random
+from PIL import Image
 
 
 
@@ -57,3 +58,6 @@ def extract_state(ob, model):
     state = model.predict(ob)*200
     state = [0, state[0, 0]-state[0, 1], state[0, 0]-state[0, 2], state[0, 3]]
     return np.asarray(state)
+def preprocess_state(ob):
+    
+    return state

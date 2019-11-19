@@ -9,10 +9,10 @@ from wimblepong.fast_ai import FastAi
 env = gym.make("WimblepongVisualMultiplayer-v0")
 #%%
 # Parameters
-headless = False
+headless = True
 env.unwrapped.scale = 2
 env.unwrapped.fps = 100
-episodes = 10
+episodes = 20
 
 # Define the player IDs for both SimpleAI agents
 player_id = 1
@@ -109,7 +109,7 @@ y = scaler.fit_transform(Y)
 model = conv_model(size_out)
 model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
 # Train Model
-history = model.fit(x, y, epochs=10, batch_size=26, shuffle=True, validation_split=0.3)
+history = model.fit(x, y, epochs=20, batch_size=26, shuffle=True, validation_split=0.3)
 # Save model weights
 model.save('wimblepong/00_baseline.h5')
 
