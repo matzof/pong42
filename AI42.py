@@ -1,6 +1,5 @@
 """Created by Matzof on Sat Nov 16 22:23:22 2019"""
 from dqn_agent import Agent as DQNAgent
-from agent_ac import Agent as
 from utils import extract_state
 #%%
 class AI42(object):

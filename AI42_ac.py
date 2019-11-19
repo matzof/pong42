@@ -1,6 +1,5 @@
 """Created by Matzof on Sat Nov 16 22:23:22 2019"""
-from dqn_agent import Agent as DQNAgent
-from agent_ac import Agent as ACagent
+from agent_ac import Agent, Policy
 from utils import extract_state
 #%%
 class AI42(object):
@@ -12,8 +11,8 @@ class AI42(object):
         # only in straight lines
         self.bpe = 4                
         self.name = "AI42"
-        self.agent = ACagent(4, 3, replay_buffer_size=50000,
-                 batch_size=32, hidden_size=12, gamma=0.98)
+        self.policy = Policy()
+        self.agent = Agent(self.policy)
 
     def get_name(self):
         """

@@ -7,7 +7,7 @@ from utils import Transition, ReplayMemory, extract_state
 
 
 class Policy(torch.nn.Module):
-    def __init__(self, state_space, action_space):
+    def __init__(self, state_space = 4, action_space = 3):
         super().__init__()
         self.state_space = state_space
         self.action_space = action_space
@@ -32,7 +32,7 @@ class Policy(torch.nn.Module):
 
 class Agent(object):
     def __init__(self, policy, baseline=0):
-        self.train_device = "gpu"
+        self.train_device = "cpu"
         self.policy = policy.to(self.train_device)
         self.optimizer = torch.optim.RMSprop(policy.parameters(), lr=5e-3)
         self.gamma = 0.98
