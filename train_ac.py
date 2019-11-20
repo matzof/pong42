@@ -41,8 +41,10 @@ for ep in range(episodes):
         # Step the environment and get the rewards and new observations
         previous_state1 = ob1
         (ob1, ob2), (rew1, rew2), done, info = env.step((action1, action2))
+        rew1 += round(length_ep/100)
         # Store action's outcome (so that the agent can improve its policy)
-        player.agent.store_transition(previous_state1, action_probabilities1, action1, rew1, model)
+        player.agent.store_transition(previous_state1, action_probabilities1, 
+                                      action1, rew1, model)
         # store total length of each episode
         length_ep += 1
         # Count the wins
