@@ -41,9 +41,13 @@ for ep in range(episodes):
         # Step the environment and get the rewards and new observations
         previous_state1 = ob1
         (ob1, ob2), (rew1, rew2), done, info = env.step((action1, action2))
+        # adjust reward for training purpose
         if rew1 == 10:
             win1 += 1
+        if rew1 == -10:
+            rew1 = 0
         rew1 += round(length_ep/50)
+        
         # Store action's outcome (so that the agent can improve its policy)
         player.agent.store_transition(previous_state1, action_probabilities1, 
                                       action1, rew1, model)
