@@ -56,7 +56,7 @@ def extract_state(ob, model):
     ob = np.mean(ob, -1)
     ob = np.reshape(ob, (1, ob.shape[0], ob.shape[1], 1))
     state = model.predict(ob)
-    state = [0, state[0, 0]-state[0, 1], state[0, 0]-state[0, 2], state[0, 3]]
+    # state = [0, state[0, 0]-state[0, 1], state[0, 0]-state[0, 2], state[0, 3]]
     return np.asarray(state)
 def preprocess_state(ob):
     pass
