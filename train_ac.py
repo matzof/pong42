@@ -7,7 +7,6 @@ from wimblepong.fast_ai import FastAi
 from utils import plot_rewards
 import torch
 from keras.models import load_model
-
 # %%
 env = gym.make("WimblepongVisualMultiplayer-v0")
 # %%
@@ -46,7 +45,7 @@ for ep in range(episodes):
             win1 += 1
         if rew1 == -10:
             rew1 = 0
-        rew1 += round(length_ep/30)
+        rew1 += round(length_ep/100)
         
         # Store action's outcome (so that the agent can improve its policy)
 #        player.agent.store_transition(previous_state1, action_probabilities1, 
@@ -59,10 +58,11 @@ for ep in range(episodes):
         if render:
             env.render()
         if done:
+            length_history.append(length_ep)
             observation = env.reset()
-            print("episode {} over. Length ep: {}. Broken WR: {:.3f}. Reward: {}".format(ep,
-                       length_ep, win1 / (ep + 1), rew1))
-    length_history.append(length_ep)
+            print("episode {} over. Length ep: {}. Mean Length: {:.1f}. Winrate: {:.3f}. Reward: {}".format(ep,
+                       length_ep, sum(length_history)/len(length_history), 
+                        win1 / (ep + 1), rew1))
 #    plot_rewards(length_history)
 
 
