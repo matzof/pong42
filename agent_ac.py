@@ -16,7 +16,7 @@ class Policy(torch.nn.Module):
         self.fc2 = torch.nn.Linear(self.hidden, action_space)
         self.fc3 = torch.nn.Linear(self.hidden, 1)
         self.init_weights()
-        self.sigma = torch.nn.Parameter(torch.zeros(1) + 10)
+        self.sigma = torch.zeros(1) + 0.5
         
     def init_weights(self):
         for m in self.modules():
@@ -25,17 +25,17 @@ class Policy(torch.nn.Module):
                 torch.nn.init.zeros_(m.bias)
 
     def forward(self, x):
+        sigma = F.softplus(self.sigma)
         x = self.fc1(x)
         x = F.relu(x)
-        mu = self.fc2(x)
-        sigma = F.softplus(self.sigma)
+        mu = F.sigmoid(self.fc2(x))*2
         policy_dist = Normal(mu, sigma)
         value = self.fc3(x)
         return value, policy_dist
 
 class Agent(object):
     def __init__(self, policy, baseline=0):
-        self.train_device = "cuda"
+        self.train_device = "cpu"
         self.policy = policy.to(self.train_device)
         self.optimizer = torch.optim.RMSprop(policy.parameters(), lr=0.001)
         self.gamma = 0.98
@@ -56,7 +56,7 @@ class Agent(object):
 
         # TODO: Compute critic loss and advantages (T3)
         # Always put the last next_state predicted value as 0 because the episode is over
-        next_values = torch.cat((values[1:], torch.zeros(1).cuda())).detach()
+        next_values = torch.cat((values[1:], torch.zeros(1))).detach()
         advantages = (rewards + self.gamma * next_values) - values
         critic_loss = torch.mean(advantages**2)
 
@@ -78,14 +78,15 @@ class Agent(object):
         value, action_distribution = self.policy.forward(x)
         
         if evaluation:
-            action = action_distribution.mean()
+            action = action_distribution.mean().round()
         else:
-            action = action_distribution.sample()
+            action = action_distribution.sample().round()
 
         # TODO: Calculate the log probability of the action (T1)
         act_log_prob = action_distribution.log_prob(action)
         # TODO: Return state value prediction, and/or save it somewhere (T3)
         self.values.append(value)
+        print(action)
         return action, act_log_prob
 
     def store_transition(self, state, action_prob, action_taken, reward, model):
