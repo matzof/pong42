@@ -7,6 +7,8 @@ from wimblepong.fast_ai import FastAi
 from utils import plot_rewards
 import torch
 from keras.models import load_model
+from guppy import hpy
+h=hpy()
 # %%
 env = gym.make("WimblepongVisualMultiplayer-v0")
 # %%
@@ -14,7 +16,6 @@ env = gym.make("WimblepongVisualMultiplayer-v0")
 render = False
 episodes = 1000000
 glie_a = episodes / 20
-num_episodes = 1000
 TARGET_UPDATE = 20
 
 # Define the player IDs for both SimpleAI agents
@@ -26,7 +27,7 @@ player = AI42(env, player_id)
 # Set the names for both SimpleAIs
 env.set_names(player.get_name(), opponent.get_name())
 
-model = load_model('00_baseline.h5')
+model = 1# load_model('00_baseline.h5')
 (ob1, ob2), (rew1, rew2), done, info = env.step((2, 2))
 win1 = 0
 length_history = []
@@ -38,7 +39,6 @@ for ep in range(episodes):
         action1, action_probabilities1 = player.get_action_cheating(ob1, model)
         action2 = opponent.get_action()
         # Step the environment and get the rewards and new observations
-        previous_state1 = ob1
         (ob1, ob2), (rew1, rew2), done, info = env.step((action1, action2))
         # adjust reward for training purpose
         if rew1 == 10:
@@ -63,10 +63,9 @@ for ep in range(episodes):
             print("episode {} over. Length ep: {}. Mean Length: {:.1f}. Winrate: {:.3f}. Reward: {}".format(ep,
                        length_ep, sum(length_history[len(length_history)-1000:])/1000, 
                         win1 / (ep + 1), rew1))
+        
+            
 #    plot_rewards(length_history)
-
-
-
 
 
 
