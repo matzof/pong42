@@ -1,6 +1,6 @@
 """Created by Matzof on Sat Nov 16 22:23:22 2019"""
-from agent_ac import Agent, Policy
-from utils import extract_state, extract_state_cheating
+from agent_pg import Agent, Policy
+from utils import extract_state
 #%%
 class AI42(object):
     def __init__(self, env, player_id=1):
@@ -26,15 +26,6 @@ class AI42(object):
         on the observation ob
         """
         state = extract_state(ob, model)
-        action, action_probabilities = self.agent.get_action(state)
-        return action, action_probabilities
-    
-    def get_action_cheating(self, ob, model):
-        """
-        Interface function that returns the action that the agent took based
-        on the observation ob
-        """
-        state = extract_state_cheating(self.env, self.player_id)
         action, action_probabilities = self.agent.get_action(state)
         return action, action_probabilities
 

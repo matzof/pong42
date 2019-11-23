@@ -2,8 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.distributions.categorical import Categorical
-from utils import Transition, ReplayMemory, extract_state
-import random
+from utils import Transition, ReplayMemory, extract_state, extract_state_cheating
 
 
 
@@ -27,9 +26,10 @@ class Policy(torch.nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = F.relu(x)
-        probs = F.softmax(self.fc2(x), 0)
+        action_probs = F.softmax(self.fc2(x), 0)
         value = self.fc3(x)
-        return value, probs
+        action_distribution = Categorical(action_probs)
+        return value, action_distribution
 
 class Agent(object):
     def __init__(self, policy, baseline=0):
@@ -74,9 +74,7 @@ class Agent(object):
 
         # TODO: Pass state x through the policy network (T1)
         value, action_distribution = self.policy.forward(x)
-        action_distribution = Categorical(action_distribution)
         action = action_distribution.sample()
-
 
         # TODO: Calculate the log probability of the action (T1)
         act_log_prob = action_distribution.log_prob(action)
@@ -86,7 +84,14 @@ class Agent(object):
 
     def store_transition(self, state, action_prob, action_taken, reward, model):
         state = extract_state(state, model)
-
+        
+        self.states.append(state)
+        self.action_probs.append(action_prob)
+        self.rewards.append(torch.Tensor([reward]))
+    
+    def store_transition_cheating(self, env, action_prob, action_taken, reward, player_id):
+        state = extract_state_cheating(env, player_id)
+        
         self.states.append(state)
         self.action_probs.append(action_prob)
         self.rewards.append(torch.Tensor([reward]))

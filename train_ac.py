@@ -36,7 +36,7 @@ for ep in range(episodes):
     length_ep = 0
     while not done:
         # Get the actions from both SimpleAIs
-        action1, action_probabilities1 = player.get_action(ob1, model)
+        action1, action_probabilities1 = player.get_action_cheating(ob1, model)
         action2 = opponent.get_action()
         # Step the environment and get the rewards and new observations
         previous_state1 = ob1
@@ -49,8 +49,10 @@ for ep in range(episodes):
         rew1 += round(length_ep/30)
         
         # Store action's outcome (so that the agent can improve its policy)
-        player.agent.store_transition(previous_state1, action_probabilities1, 
-                                      action1, rew1, model)
+#        player.agent.store_transition(previous_state1, action_probabilities1, 
+#                                      action1, rew1, model)
+        player.agent.store_transition_cheating(env, action_probabilities1, 
+                                      action1, rew1, player_id)
         # store total length of each episode
         length_ep += 1
         # Count the wins
