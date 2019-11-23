@@ -79,7 +79,7 @@ class Agent(object):
         # TODO: Calculate the log probability of the action (T1)
         act_log_prob = action_distribution.log_prob(action)
         # TODO: Return state value prediction, and/or save it somewhere (T3)
-        self.values.append(torch.Tensor(value))
+        self.values.append(value)
         return action, act_log_prob
 
     def store_transition(self, state, action_prob, action_taken, reward, model):
