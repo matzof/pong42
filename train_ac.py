@@ -45,7 +45,7 @@ for ep in range(episodes):
             win1 += 1
         if rew1 == -10:
             rew1 = 0
-        rew1 += round(length_ep/3)
+        rew1 += round(length_ep/4)
         
         # Store action's outcome (so that the agent can improve its policy)
 #        player.agent.store_transition(previous_state1, action_probabilities1, 
