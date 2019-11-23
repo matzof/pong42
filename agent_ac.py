@@ -85,14 +85,27 @@ class Agent(object):
     def store_transition(self, state, action_prob, action_taken, reward, model):
         state = extract_state(state, model)
         
-        self.states.append(state)
-        self.action_probs.append(action_prob)
-        self.rewards.append(torch.Tensor([reward]))
+        if len(self.states) == 1000:
+            self.states = self.states[1:].append(state)
+            self.action_probs = self.action_probs[1:].append(action_prob)
+            self.rewards = self.rewards[1:].append(torch.Tensor([reward]))
+        
+        else:
+            self.states.append(state)
+            self.action_probs.append(action_prob)
+            self.rewards.append(torch.Tensor([reward]))
     
     def store_transition_cheating(self, env, action_prob, action_taken, reward, player_id):
         state = extract_state_cheating(env, player_id)
         
-        self.states.append(state)
-        self.action_probs.append(action_prob)
-        self.rewards.append(torch.Tensor([reward]))
+        if len(self.states) == 1000:
+            self.states = self.states[1:].append(state)
+            self.action_probs = self.action_probs[1:].append(action_prob)
+            self.rewards = self.rewards[1:].append(torch.Tensor([reward]))
+        
+        else:
+            self.states.append(state)
+            self.action_probs.append(action_prob)
+            self.rewards.append(torch.Tensor([reward]))
+        
 
