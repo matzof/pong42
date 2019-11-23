@@ -35,7 +35,7 @@ class Agent(object):
     def __init__(self, policy, baseline=0):
         self.train_device = "cuda"
         self.policy = policy.to(self.train_device)
-        self.optimizer = torch.optim.RMSprop(policy.parameters(), lr=0.001)
+        self.optimizer = torch.optim.RMSprop(policy.parameters(), lr=0.01)
         self.gamma = 0.98
         self.states = []
         self.action_probs = []
