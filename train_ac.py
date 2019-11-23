@@ -11,7 +11,7 @@ from keras.models import load_model
 env = gym.make("WimblepongVisualMultiplayer-v0")
 # %%
 # Parameters
-render = True
+render = False
 episodes = 1000000
 glie_a = episodes / 20
 TARGET_UPDATE = 20
