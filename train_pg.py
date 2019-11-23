@@ -2,7 +2,7 @@
 import gym
 
 import wimblepong
-from AI42_ac import AI42
+from AI42_pg import AI42
 from wimblepong.fast_ai import FastAi
 from utils import plot_rewards, extract_state_cheating
 import torch
@@ -61,7 +61,7 @@ for ep in range(episodes):
                 win1 / (ep + 1), rew1))
             
     state = extract_state_cheating(env, player_id)
-    player.agent.episode_finished(ep, state)
+    player.agent.episode_finished(ep)
         
             
 #    plot_rewards(length_history)

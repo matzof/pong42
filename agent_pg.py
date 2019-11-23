@@ -6,7 +6,7 @@ import numpy as np
 from utils import discount_rewards
 
 class Policy(torch.nn.Module):
-    def __init__(self, state_space, action_space):
+    def __init__(self, state_space=4, action_space=3):
         super().__init__()
         self.state_space = state_space
         self.action_space = action_space
