@@ -33,7 +33,7 @@ class Policy(torch.nn.Module):
 
 class Agent(object):
     def __init__(self, policy, baseline=0):
-        self.train_device = "cpu"
+        self.train_device = "cuda"
         self.policy = policy.to(self.train_device)
         self.optimizer = torch.optim.RMSprop(policy.parameters(), lr=5e-3)
         self.gamma = 0.98
@@ -54,7 +54,7 @@ class Agent(object):
 
         # TODO: Compute critic loss and advantages (T3)
         # Always put the last next_state predicted value as 0 because the episode is over
-        next_values = torch.cat((values[1:], torch.tensor([0.0]))).detach()
+        next_values = torch.cat((values[1:], torch.zeros(1, 1).cuda())).detach()
         advantages = (rewards + self.gamma * next_values) - values
         critic_loss = torch.mean(advantages**2)
 
