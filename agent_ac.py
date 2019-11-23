@@ -54,7 +54,7 @@ class Agent(object):
 
         # TODO: Compute critic loss and advantages (T3)
         # Always put the last next_state predicted value as 0 because the episode is over
-        next_values = torch.cat((values[1:], torch.zeros(1, 1).cuda())).detach()
+        next_values = torch.cat((values[1:], torch.zeros(1).cuda())).detach()
         advantages = (rewards + self.gamma * next_values) - values
         critic_loss = torch.mean(advantages**2)
 
