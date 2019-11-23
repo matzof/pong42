@@ -7,7 +7,7 @@ from utils import extract_state, extract_state_cheating
 
 
 class Policy(torch.nn.Module):
-    def __init__(self, state_space = 4, action_space = 1):
+    def __init__(self, state_space = 4, action_space = 3):
         super().__init__()
         self.state_space = state_space
         self.action_space = action_space
@@ -16,7 +16,6 @@ class Policy(torch.nn.Module):
         self.fc2 = torch.nn.Linear(self.hidden, action_space)
         self.fc3 = torch.nn.Linear(self.hidden, 1)
         self.init_weights()
-        self.sigma = torch.nn.Parameter(torch.zeros(1) + 10)
         
     def init_weights(self):
         for m in self.modules():
@@ -27,11 +26,9 @@ class Policy(torch.nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = F.relu(x)
-        mu = self.fc2_mean(x)
-        sigma = F.softplus(self.sigma)
         action_probs = F.softmax(self.fc2(x), -1)
-        policy_dist = Normal(mu, sigma)
         value = self.fc3(x)
+        action_distribution = Categorical(action_probs)
         return value, action_distribution
 
 class Agent(object):

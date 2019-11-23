@@ -61,7 +61,7 @@ for ep in range(episodes):
                         win1 / (ep + 1), rew1))
             
             state = extract_state_cheating(env, player_id)
-            player.agent.episode_finished(ep, state)
+    player.agent.episode_finished(ep, state)
         
             
 #    plot_rewards(length_history)
