@@ -7,8 +7,6 @@ from wimblepong.fast_ai import FastAi
 from utils import plot_rewards
 import torch
 from keras.models import load_model
-from guppy import hpy
-h=hpy()
 # %%
 env = gym.make("WimblepongVisualMultiplayer-v0")
 # %%
