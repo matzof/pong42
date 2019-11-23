@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.distributions.categorical import Categorical
+from torch.distributions import Normal
 from utils import extract_state, extract_state_cheating
 
 
@@ -27,16 +27,15 @@ class Policy(torch.nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = F.relu(x)
-        mu = self.fc2_mean(x)
+        mu = self.fc2(x)
         sigma = F.softplus(self.sigma)
-        action_probs = F.softmax(self.fc2(x), -1)
         policy_dist = Normal(mu, sigma)
         value = self.fc3(x)
-        return value, action_distribution
+        return value, policy_dist
 
 class Agent(object):
     def __init__(self, policy, baseline=0):
-        self.train_device = "cuda"
+        self.train_device = "cpu"
         self.policy = policy.to(self.train_device)
         self.optimizer = torch.optim.RMSprop(policy.parameters(), lr=0.001)
         self.gamma = 0.98
@@ -57,7 +56,7 @@ class Agent(object):
 
         # TODO: Compute critic loss and advantages (T3)
         # Always put the last next_state predicted value as 0 because the episode is over
-        next_values = torch.cat((values[1:], torch.zeros(1).cuda())).detach()
+        next_values = torch.cat((values[1:], torch.zeros(1))).detach()
         advantages = (rewards + self.gamma * next_values) - values
         critic_loss = torch.mean(advantages**2)
 
@@ -77,7 +76,11 @@ class Agent(object):
 
         # TODO: Pass state x through the policy network (T1)
         value, action_distribution = self.policy.forward(x)
-        action = action_distribution.sample()
+        
+        if evaluation:
+            action = action_distribution.mean()
+        else:
+            action = action_distribution.sample()
 
         # TODO: Calculate the log probability of the action (T1)
         act_log_prob = action_distribution.log_prob(action)

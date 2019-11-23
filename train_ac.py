@@ -60,7 +60,7 @@ for ep in range(episodes):
                        length_ep, sum(length_history[len(length_history)-1000:])/1000, 
                         win1 / (ep + 1), rew1))
             
-            state = extract_state_cheating(env, player_id)
+    state = extract_state_cheating(env, player_id)
     player.agent.episode_finished(ep, state)
         
             
