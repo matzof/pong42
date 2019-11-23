@@ -41,7 +41,7 @@ for ep in range(episodes):
         # adjust reward for training purpose
         if rew1 == 10:
             win1 += 1
-#        rew1 += round(length_ep/40)
+        rew1 += round(length_ep/5)
         
         # Store action's outcome (so that the agent can improve its policy)
 #        player.agent.store_transition(previous_state1, action_probabilities1, 
