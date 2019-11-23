@@ -26,7 +26,7 @@ class Policy(torch.nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = F.relu(x)
-        action_probs = F.softmax(self.fc2(x), 0)
+        action_probs = F.softmax(self.fc2(x), -1)
         value = self.fc3(x)
         action_distribution = Categorical(action_probs)
         return value, action_distribution

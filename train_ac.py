@@ -12,7 +12,7 @@ env = gym.make("WimblepongVisualMultiplayer-v0")
 # %%
 # Parameters
 render = False
-episodes = 100000
+episodes = 1000000
 glie_a = episodes / 20
 num_episodes = 1000
 TARGET_UPDATE = 20
@@ -45,7 +45,7 @@ for ep in range(episodes):
             win1 += 1
         if rew1 == -10:
             rew1 = 0
-        rew1 += round(length_ep/100)
+        rew1 += round(length_ep/30)
         
         # Store action's outcome (so that the agent can improve its policy)
 #        player.agent.store_transition(previous_state1, action_probabilities1, 
@@ -61,7 +61,7 @@ for ep in range(episodes):
             length_history.append(length_ep)
             observation = env.reset()
             print("episode {} over. Length ep: {}. Mean Length: {:.1f}. Winrate: {:.3f}. Reward: {}".format(ep,
-                       length_ep, sum(length_history)/len(length_history), 
+                       length_ep, sum(length_history[len(length_history)-2000:])/2000, 
                         win1 / (ep + 1), rew1))
 #    plot_rewards(length_history)
 
