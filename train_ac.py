@@ -4,7 +4,7 @@ import gym
 import wimblepong
 from AI42_ac import AI42
 from wimblepong.fast_ai import FastAi
-from utils import plot_rewards
+from utils import plot_rewards, extract_state_cheating
 import torch
 from keras.models import load_model
 # %%
@@ -59,6 +59,9 @@ for ep in range(episodes):
             print("episode {} over. Length ep: {}. Mean Length: {:.1f}. Winrate: {:.3f}. Reward: {}".format(ep,
                        length_ep, sum(length_history[len(length_history)-1000:])/1000, 
                         win1 / (ep + 1), rew1))
+            
+            state = extract_state_cheating(env, player_id)
+            player.agent.episode_finished(ep, state)
         
             
 #    plot_rewards(length_history)
