@@ -33,7 +33,7 @@ class Policy(torch.nn.Module):
 
 class Agent(object):
     def __init__(self, policy, baseline=0):
-        self.train_device = "cuda"
+        self.train_device = "cpu"
         self.policy = policy.to(self.train_device)
         self.optimizer = torch.optim.RMSprop(policy.parameters(), lr=5e-3)
         self.gamma = 0.98
