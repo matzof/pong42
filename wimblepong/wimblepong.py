@@ -5,7 +5,7 @@ import gym
 import os
 from PIL import Image, ImageDraw, ImageFont
 import matplotlib
-import cv2
+#import cv2
 
 
 class Rect(object):

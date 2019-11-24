@@ -26,7 +26,7 @@ class Policy(torch.nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = F.relu(x)
-        action_probs = F.softmax(self.fc2(x), -1)
+        action_probs = F.softmax(self.fc2(x), dim=-1)
         value = self.fc3(x)
         action_distribution = Categorical(action_probs)
         return value, action_distribution
@@ -42,6 +42,7 @@ class Agent(object):
         self.rewards = []
         self.baseline = baseline
         self.values = []
+
 
     def episode_finished(self, episode_number, observation):
         action_probs = torch.stack(self.action_probs, dim=0) \
@@ -90,6 +91,7 @@ class Agent(object):
         self.rewards.append(torch.Tensor([reward]))
     
     def store_transition_cheating(self, env, action_prob, action_taken, reward, player_id):
+        
         state = extract_state_cheating(env, player_id)
         
         self.states.append(state)
