@@ -2,7 +2,7 @@
 import gym
 
 import wimblepong
-from AI42_ac import AI42
+from AI42_pg import AI42
 from wimblepong.fast_ai import FastAi
 from utils import plot_rewards, extract_state_cheating
 import torch
@@ -25,66 +25,46 @@ player = AI42(env, player_id)
 # Set the names for both SimpleAIs
 env.set_names(player.get_name(), opponent.get_name())
 
-model = 1 #TODO: model = load_model('00_baseline.h5')
+model = 1# load_model('00_baseline.h5')
 (ob1, ob2), (rew1, rew2), done, info = env.step((2, 2))
 win1 = 0
 length_history = []
-
 for ep in range(episodes):
     done = False
     length_ep = 0
-
-    # Reset the environment and observe the initial state
-    ob1 = env.reset()
-    ob2 = env.reset()
-
-    # Loop until the episode is over
     while not done:
-
         # Get the actions from both SimpleAIs
         action1, action_probabilities1 = player.get_action_cheating(ob1, model)
         action2 = opponent.get_action()
-
         # Step the environment and get the rewards and new observations
         (ob1, ob2), (rew1, rew2), done, info = env.step((action1, action2))
-        
-        # Count the win for print
+        # adjust reward for training purpose
         if rew1 == 10:
             win1 += 1
-        
-        # TODO: adjust reward for training purpose
-        rew1 += round(length_ep/30)
+        rew1 += round(length_ep/5)
         
         # Store action's outcome (so that the agent can improve its policy)
-        # TODO: Cheating -> comment/uncomment:
 #        player.agent.store_transition(previous_state1, action_probabilities1, 
 #                                      action1, rew1, model)
         player.agent.store_transition_cheating(env, action_probabilities1, 
                                       action1, rew1, player_id)
-        
         # store total length of each episode
         length_ep += 1
-
+        # Count the wins
         if render:
             env.render()
-
-
-    # when done:
-
-    # TODO: cheating -> comment/ uncomment:
-    # state = extract_state(ob1, model)     
-    state = extract_state_cheating(env, player_id) 
-    player.agent.episode_finished(ep, state)
-
+    
     length_history.append(length_ep)
-    
+    observation = env.reset()
     print("episode {} over. Length ep: {}. Mean Length: {:.1f}. Winrate: {:.3f}. Reward: {}".format(ep,
-                length_ep, sum(length_history[len(length_history)-2000:])/2000, 
+               length_ep, sum(length_history[len(length_history)-1000:])/1000, 
                 win1 / (ep + 1), rew1))
-
-
-    
-    #plot_rewards(length_history)
+            
+    state = extract_state_cheating(env, player_id)
+    player.agent.episode_finished(ep)
+        
+            
+#    plot_rewards(length_history)
 
 
 

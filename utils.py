@@ -63,4 +63,4 @@ def extract_state_cheating(env, player_id):
     player = env.player1 if player_id == 1 else env.player2
     opponent = env.player2 if player_id == 1 else env.player1
     state = [player.y, env.ball.x, env.ball.y, opponent.y]
-    return np.asarray(state)
+    return np.asarray(state)/225
