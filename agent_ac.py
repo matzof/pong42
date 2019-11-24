@@ -82,8 +82,8 @@ class Agent(object):
         self.values.append(value)
         return action, act_log_prob
 
-    def store_transition(self, state, action_prob, action_taken, reward, model):
-        state = extract_state(state, model)
+    def store_transition(self, ob, action_prob, action_taken, reward, model):
+        state = extract_state(ob, model)
             
         self.states.append(state)
         self.action_probs.append(action_prob)

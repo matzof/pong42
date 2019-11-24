@@ -25,7 +25,7 @@ player = AI42(env, player_id)
 # Set the names for both SimpleAIs
 env.set_names(player.get_name(), opponent.get_name())
 
-model = 1# load_model('00_baseline.h5')
+model = load_model('00_baseline.h5')
 (ob1, ob2), (rew1, rew2), done, info = env.step((2, 2))
 win1 = 0
 length_history = []
@@ -55,6 +55,7 @@ for ep in range(episodes):
             env.render()
     
     state = extract_state_cheating(env, player_id)
+    # state = extract_state(ob1, model)
     player.agent.episode_finished(ep, state)
     length_history.append(length_ep)
     observation = env.reset()
