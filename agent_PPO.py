@@ -94,10 +94,10 @@ class Agent(object):
             surr1 =  ratios * advantages
             surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
             loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(values, rewards) - 0.01 * dist_entropy
-
+            
             # Take gradient step to update network parameters 
             self.optimizer.zero_grad()
-            loss.backward()
+            loss.sum().backward()
             self.optimizer.step()
 
         # Copy new weights into old policy:
@@ -110,7 +110,6 @@ class Agent(object):
     def get_action(self, state, evaluation=False):
 
         x = torch.from_numpy(state).float().to(self.train_device)
-
         # Pass state x through the actor network 
         action_probs = self.policy.actor(x)
         action_distribution = Categorical(action_probs)
@@ -123,7 +122,8 @@ class Agent(object):
 
     def store_transition(self, observation, action_prob, action_taken, reward, done, model):
         
-        state = extract_state(observation, model)        
+        state = extract_state(observation, model)  
+        state = torch.from_numpy(state).float().to(self.train_device)
         self.states.append(state)
         self.action_probs.append(action_prob)
         self.actions.append(action_taken)
@@ -134,8 +134,10 @@ class Agent(object):
     def store_transition_cheating(self, env, action_prob, action_taken, reward, done, player_id):
         
         state = extract_state_cheating(env, player_id)
+        state = torch.from_numpy(state).float().to(self.train_device)
         self.states.append(state)
         self.action_probs.append(action_prob)
         self.actions.append(action_taken)
         self.rewards.append(reward)
+        self.dones.append(done)
 
