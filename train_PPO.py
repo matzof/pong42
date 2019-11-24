@@ -80,7 +80,7 @@ for ep in range(episodes):
             # TODO: cheating -> comment/ uncomment:
             # state =  state = extract_state(env, model)
             state = extract_state_cheating(env, player_id)
-            player.agent.PPO_update(length_ep, state)            
+            player.agent.PPO_update()            
 
 
    # when done:
