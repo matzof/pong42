@@ -4,7 +4,7 @@ Mattia Zoffoli | Xinyi Tu
 
 The project work for the course (ELEC-E8125 - Reinforcement learning, 09.09.2019-04.12.2019, Aalto University) is about implementing a reinforcement learning agent that can play the game of Pong from pixels. In this environment, the agent controls one paddle and can take one of three actions: moving up or down, or staying in place.
 
-DL algorithms for preprocessing the pixel enviroment inputs:
+**DL algorithms for preprocessing the pixel enviroment inputs:**
 
 • Convolutional neural networks — neural networks with fewer weights, aimed at process- ing spatially structured data (such as images), (implemented)
 
@@ -13,7 +13,7 @@ DL algorithms for preprocessing the pixel enviroment inputs:
 • Spatial soft-argmax layers — extracting coordinates of points-of-interest from the im- age [2],
 
 
-RL algorithms experiments: 
+**RL algorithms experiments:**
 
 • Deep Q Networks (DQN) - improvements over the ’basic’ Q-learning [3]  (implemented)
 
