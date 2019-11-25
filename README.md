@@ -45,9 +45,14 @@ Your agent should be contained in a separate file called agent.py, and defined a
 
 ## References
 [1] D. Ha and J. Schmidhuber, “World models,” CoRR, vol. abs/1803.10122, 2018. [Online]. Available: http://arxiv.org/abs/1803.10122
+
 [2] S.Levine,C.Finn,T.Darrell,andP.Abbeel,“End-to-endtrainingofdeepvisuomotorpolicies,” CoRR, vol. abs/1504.00702, 2015. [Online]. Available: http://arxiv.org/abs/1504.00702
+
 [3] V. Mnih, K. Kavukcuoglu, D. Silver, A. Graves, I. Antonoglou, D. Wierstra, and M. A. Riedmiller, “Playing atari with deep reinforcement learning,” CoRR, vol. abs/1312.5602, 2013. [Online]. Available: http://arxiv.org/abs/1312.5602
+
 [4] J. Schulman, S. Levine, P. Moritz, M. I. Jordan, and P. Abbeel, “Trust region policy optimization,” CoRR, vol. abs/1502.05477, 2015. [Online]. Available: http: //arxiv.org/abs/1502.05477
+
 [5] J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, “Proximal policy optimization algorithms,” CoRR, vol. abs/1707.06347, 2017. [Online]. Available: http://arxiv.org/abs/1707.06347
+
 [6] Z. Wang, V. Bapst, N. Heess, V. Mnih, R. Munos, K. Kavukcuoglu, and N. de Freitas, “Sample efficient actor-critic with experience replay,” CoRR, vol. abs/1611.01224, 2016.
 [Online]. Available: http://arxiv.org/abs/1611.01224
