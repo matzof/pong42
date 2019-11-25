@@ -2,16 +2,26 @@
 
 Mattia Zoffoli | Xinyi Tu
 
-The final project work for the course (ELEC-E8125 - Reinforcement learning, 09.09.2019-04.12.2019, Aalto University) is about implementing a reinforcement learning agent that can play the game of Pong from pixels. In this environment, the agent controls one paddle and can take one of three actions: moving up or down, or staying in place.
+The project work for the course (ELEC-E8125 - Reinforcement learning, 09.09.2019-04.12.2019, Aalto University) is about implementing a reinforcement learning agent that can play the game of Pong from pixels. In this environment, the agent controls one paddle and can take one of three actions: moving up or down, or staying in place.
+
+DL algorithms for preprocessing the pixel enviroment inputs:
+
+• Convolutional neural networks — neural networks with fewer weights, aimed at process- ing spatially structured data (such as images), (implemented)
+
+• Variatonal autoencoders — a way of performing unsupervised feature learning (and reducing the dimensionality of your data; example use in RL in [1]),
+
+• Spatial soft-argmax layers — extracting coordinates of points-of-interest from the im- age [2],
 
 
-RL algorithms experiments tried: 
+RL algorithms experiments: 
 
-• Deep Q Networks (DQN) - improvements over the ’basic’ Q-learning [3]
+• Deep Q Networks (DQN) - improvements over the ’basic’ Q-learning [3]  (implemented)
 
-• Proximal policy optimization (PPO) — — applying additional constraints to policy gradient policy updates, similar idea to TRPO with simplified mathematical formulation [5]
+• Trust-region policy optimization (TRPO) — applying additional constraints to policy gradient policy updates [4],
 
-• Actor-critic with experience replay (ACER) — reuse past experience when doing policy updates [6]
+• Proximal policy optimization (PPO) — — applying additional constraints to policy gradient policy updates, similar idea to TRPO with simplified mathematical formulation [5] (implemented)
+
+• Actor-critic with experience replay (ACER) — reuse past experience when doing policy updates [6] (implemented)
 
 
 ## The Pong game Components:
