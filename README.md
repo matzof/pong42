@@ -2,7 +2,7 @@
 
 Mattia Zoffoli | Xinyi Tu
 
-The project work for the course is about implementing a reinforcement learning agent that can play the game of Pong from pixels. In this environment, the agent controls one paddle and can take one of three actions: moving up or down, or staying in place.
+The final project work for the course (ELEC-E8125 - Reinforcement learning, 09.09.2019-04.12.2019, Aalto University) is about implementing a reinforcement learning agent that can play the game of Pong from pixels. In this environment, the agent controls one paddle and can take one of three actions: moving up or down, or staying in place.
 
 
 RL algorithms experiments tried: 
