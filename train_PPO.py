@@ -54,12 +54,12 @@ for ep in range(episodes):
         previous_state1 = ob1
         (ob1, ob2), (rew1, rew2), done, info = env.step((action1, action2))
 
-#        # Count the win for print
-#        if rew1 == 10:
-#            win1 += 1
+        # Count the win for print
+        if rew1 == 10:
+            win1 += 1
 
         # TODO: adjust reward for training purpose
-        rew1 += round(length_ep/30)
+#        rew1 += round(length_ep/30)
         
         # Store action's outcome (so that the agent can improve its policy)
         # TODO: Cheating -> comment/uncomment:
