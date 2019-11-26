@@ -29,13 +29,13 @@ class AI42(object):
         action, action_probabilities = self.agent.get_action(state)
         return action, action_probabilities
     
-    def get_action_cheating(self, ob):
+    def get_action_cheating(self, state, ep):
         """
         Interface function that returns the action that the agent took based
         on the observation ob
         """
-        state = extract_state_cheating(self.env, self.player_id)
-        action, action_probabilities = self.agent.get_action(state)
+#        state = extract_state_cheating(self.env, self.player_id)
+        action, action_probabilities = self.agent.get_action(state, ep)
         return action, action_probabilities
 
     def reset(self):

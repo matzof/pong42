@@ -4,10 +4,11 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 from torch.distributions.categorical import Categorical
 from utils import Transition, ReplayMemory, extract_state, extract_state_cheating
+from random import random
 
 
 class Policy(torch.nn.Module):
-    def __init__(self, state_space = 4, action_space = 3, hidden = 128):
+    def __init__(self, state_space = 6, action_space = 3, hidden = 128):
         super().__init__()
 
         self.actor_layer = nn.Sequential(
@@ -108,15 +109,21 @@ class Agent(object):
         self.states, self.action_probs, self.actions, self.rewards = [], [], [], []
 
 
-    def get_action(self, state, evaluation=False):
+    def get_action(self, state, ep, evaluation=False):
 
         x = torch.from_numpy(state).float().to(self.train_device)
         # Pass state x through the actor network 
         action_probs = self.policy.actor(x)
         action_distribution = Categorical(action_probs)
+        print(action_probs)
 
         action = action_distribution.sample()
         act_log_prob = action_distribution.log_prob(action)
+        
+#        if random() < 0.2 and action > 0:
+#            action = action - 1
+#        elif random() < 0.2:
+#            action = action + 1
 
         return action, act_log_prob
 
@@ -132,9 +139,9 @@ class Agent(object):
         self.dones.append(done)
 
 
-    def store_transition_cheating(self, env, action_prob, action_taken, reward, done, player_id):
+    def store_transition_cheating(self, state, action_prob, action_taken, reward, done):
         
-        state = extract_state_cheating(env, player_id)
+#        state = extract_state_cheating(env, player_id)
         state = torch.from_numpy(state).float().to(self.train_device)
         self.states.append(state)
         self.action_probs.append(action_prob)
