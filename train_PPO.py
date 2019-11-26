@@ -54,9 +54,9 @@ for ep in range(episodes):
         previous_state1 = ob1
         (ob1, ob2), (rew1, rew2), done, info = env.step((action1, action2))
 
-        # Count the win for print
-        if rew1 == 10:
-            win1 += 1
+#        # Count the win for print
+#        if rew1 == 10:
+#            win1 += 1
 
         # TODO: adjust reward for training purpose
         rew1 += round(length_ep/30)
@@ -88,7 +88,7 @@ for ep in range(episodes):
     length_history.append(length_ep)
         
     print("episode {} over. Length ep: {}. Mean Length: {:.1f}. Winrate: {:.3f}. Reward: {}".format(ep,
-                length_ep, sum(length_history[len(length_history)-2000:])/2000, 
+                length_ep, sum(length_history[len(length_history)-2000:])/len(length_history), 
                 win1 / (ep + 1), rew1))
 
     # plot_rewards(length_history)

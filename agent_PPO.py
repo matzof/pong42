@@ -7,7 +7,7 @@ from utils import Transition, ReplayMemory, extract_state, extract_state_cheatin
 
 
 class Policy(torch.nn.Module):
-    def __init__(self, state_space = 4, action_space = 3, hidden = 64):
+    def __init__(self, state_space = 4, action_space = 3, hidden = 128):
         super().__init__()
 
         self.actor_layer = nn.Sequential(
@@ -88,13 +88,14 @@ class Agent(object):
 
             # Caculate the loss:
             # Finding the ratio (pi_theta / pi_theta__old) 
-            ratios = torch.exp(action_probs - old_action_probs.detach())
+            ratios = torch.exp(action_probs - old_action_probs)
+            print("Ratios: ", ratios)
             # Finding Surrogate Loss:
             advantages = rewards - values.detach()
             surr1 =  ratios * advantages
             surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
             loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(values, rewards) - 0.01 * dist_entropy
-            
+            print("Loss: ", loss)
             # Take gradient step to update network parameters 
             self.optimizer.zero_grad()
             loss.sum().backward()
