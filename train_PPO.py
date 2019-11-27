@@ -76,10 +76,11 @@ for ep in range(episodes):
         
         # PPO Update    
         if timesteps % 800 == 0:
+            print("Updating ------------------------------")
             # TODO: cheating -> comment/ uncomment:
             # state =  state = extract_state(env, model)
             state = extract_state_cheating(env, player_id)
-            player.agent.PPO_update()            
+            player.agent.PPO_update()    
 
 
     # when done:
