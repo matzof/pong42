@@ -32,9 +32,11 @@ env.set_names(player.get_name(), opponent.get_name())
 (ob1, ob2), (rew1, rew2), done, info = env.step((2, 2))
 win1 = 0
 length_history = []
+win_history = []
 
 for ep in range(episodes):
     done = False
+    timesteps = 0
     length_ep = 0
 
     # Reset the environment and observe the initial state
@@ -54,10 +56,6 @@ for ep in range(episodes):
         previous_state1 = ob1
         (ob1, ob2), (rew1, rew2), done, info = env.step((action1, action2))
 
-        # Count the win for print
-        if rew1 == 10:
-            win1 += 1
-
         # TODO: adjust reward for training purpose
 #        rew1 += round(length_ep/30)
         
@@ -70,26 +68,32 @@ for ep in range(episodes):
 
         # store total length of each episode
         length_ep += 1
+        timesteps += 1
 
         # Count the wins
         if render:
-            env.render()
-
+            env.render()        
+        
         # PPO Update    
-        if length_ep % 50 == 0:
+        if timesteps % 800 == 0:
             # TODO: cheating -> comment/ uncomment:
             # state =  state = extract_state(env, model)
             state = extract_state_cheating(env, player_id)
             player.agent.PPO_update()            
 
 
-   # when done:
-
+    # when done:
+    win_history.append(1 if rew1==10 else 0)
     length_history.append(length_ep)
+    
+    if len(win_history) == 1000:
+        length_history.pop(0)
+        win_history.pop(0)
         
     print("episode {} over. Length ep: {}. Mean Length: {:.1f}. Winrate: {:.3f}. Reward: {}".format(ep,
-                length_ep, sum(length_history[len(length_history)-1000:])/1000, 
-                win1 / (ep + 1), rew1))
+                length_ep, sum(length_history)/len(length_history), 
+                sum(win_history)/len(win_history), rew1))
+    length_ep = 0
 
     # plot_rewards(length_history)
 
