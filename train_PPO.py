@@ -75,7 +75,7 @@ for ep in range(episodes):
             env.render()        
         
         # PPO Update    
-        if timesteps % 800 == 0:
+        if timesteps % 8 == 0:
             print("Updating ------------------------------")
             # TODO: cheating -> comment/ uncomment:
             # state =  state = extract_state(env, model)
