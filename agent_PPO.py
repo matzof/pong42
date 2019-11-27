@@ -39,10 +39,10 @@ class Agent(object):
         self.policy = policy.to(self.train_device)
         self.policy_old = policy.to(self.train_device)
         self.policy_old.load_state_dict(self.policy.state_dict()) 
-        self.optimizer = torch.optim.Adam(policy.parameters(), lr=1e-3, betas=(0.9,0.999))
-        self.gamma = 0.98
+        self.optimizer = torch.optim.Adam(policy.parameters(), lr=5e-4, betas=(0.9,0.999))
+        self.gamma = 0.995
         self.eps_clip = 0.2  # TODO: Clip parameter for PPO
-        self.K_epochs = 4 # TODO: Update policy for K epochs
+        self.K_epochs = 10 # TODO: Update policy for K epochs
         self.actions = []
         self.states = []
         self.action_probs = []
