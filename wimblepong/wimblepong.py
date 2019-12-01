@@ -199,6 +199,7 @@ class Player():
 class Wimblepong(gym.core.Env):
     MOVE_UP, MOVE_DOWN, STAY = 1, 2, 0                  # Define names for the actions in the action space
     def __init__(self, opponent=None, visual=False):
+    def __init__(self, opponent=None, visual=True):
         """
         Initialization of the game arena
         """
