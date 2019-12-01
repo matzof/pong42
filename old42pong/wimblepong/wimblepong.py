@@ -231,9 +231,6 @@ class Wimblepong(gym.core.Env):
                                                         # space with 3 possible actions
         self.frameskip = 2, 5
 
-        # Load scoreboard font
-        self.scoreboard_font = self.load_font()
-
         # Initialize screen
         self.screen = None                              # Screen object used for rendering
         self._reset_screen()                           # Fill the screen with background color
@@ -281,15 +278,6 @@ class Wimblepong(gym.core.Env):
                 self.player1.name = p1
             else:
                 self.player2.name = p1
-
-    def load_font(self):
-        # Steal matplotlib's default sans font
-        font_file = matplotlib.font_manager.findfont("monospace")
-        try:
-            font = ImageFont.truetype(font_file, size=10)
-        except OSError:
-            font = ImageFont.load_default()
-        return font
 
     def _step_forward(self, actions):
         self._step_actions(actions)
@@ -490,8 +478,8 @@ class Wimblepong(gym.core.Env):
         offset2 = 5+self.SCREEN_RESOLUTION[1]/2, 5
         text_color = "#000000"
         draw.fontmode = "1"  # Turn off antialias
-        draw.text(offset1, text1, font=self.scoreboard_font, fill=text_color)
-        draw.text(offset2, text2, font=self.scoreboard_font, fill=text_color)
+        draw.text(offset1, text1, fill=text_color)
+        draw.text(offset2, text2, fill=text_color)
         self.screen = np.asarray(canvas)
 
     def switch_sides(self):
