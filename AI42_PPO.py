@@ -12,7 +12,8 @@ class Policy(torch.nn.Module):
         self.hidden = hidden
         self.conv1 = torch.nn.Conv2d(2, 32, 3, 2)
         self.conv2 = torch.nn.Conv2d(32, 64, 3, 2)
-        self.reshaped_size = 64*11*11
+        self.conv3 = torch.nn.Conv2d(64, 128, 3, 2)
+        self.reshaped_size = 128*11*11
         self.fc1_actor = torch.nn.Linear(self.reshaped_size, self.hidden)
         self.fc1_critic = torch.nn.Linear(self.reshaped_size, self.hidden)
         self.fc2_value = torch.nn.Linear(self.hidden, 1)
@@ -37,6 +38,7 @@ class Policy(torch.nn.Module):
     def base_net(self, state):
         base_net = F.relu(self.conv1(state))
         base_net = F.relu(self.conv2(base_net))
+        base_net = F.relu(self.conv3(base_net))
         base_net = base_net.reshape(-1, self.reshaped_size)
         return base_net      
         
