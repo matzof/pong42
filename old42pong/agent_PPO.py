@@ -1,25 +1,17 @@
-"""Created by Matzof on Sat Nov 16 22:23:22 2019"""
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.autograd import Variable
 from torch.distributions.categorical import Categorical
-#%%
+from utils import Transition, ReplayMemory, extract_state, extract_state_cheating
+
+
 class Policy(torch.nn.Module):
-    def __init__(self, action_space = 3, hidden = 64):
+    def __init__(self, state_space = 4, action_space = 3, hidden = 128):
         super().__init__()
-        self.action_space = action_space
-        self.hidden = hidden
-        self.conv1 = torch.nn.Conv2d(2, 32, 3, 2)
-        self.conv2 = torch.nn.Conv2d(32, 64, 3, 2)
-        self.conv3 = torch.nn.Conv2d(64, 128, 3, 2)
-        self.reshaped_size = 128*11*11
-        self.fc1_actor = torch.nn.Linear(self.reshaped_size, self.hidden)
-        self.fc1_critic = torch.nn.Linear(self.reshaped_size, self.hidden)
-        self.fc2_value = torch.nn.Linear(self.hidden, 1)
         
         self.actor_layer = nn.Sequential(
-            nn.Linear(self.reshaped_size, hidden),
+            nn.Linear(state_space, hidden),
             nn.Tanh(),
             nn.Linear(hidden, hidden),
             nn.Tanh(),
@@ -28,41 +20,26 @@ class Policy(torch.nn.Module):
         )
 
         self.critic_layer = nn.Sequential(
-            nn.Linear(self.reshaped_size, hidden),
+            nn.Linear(state_space, hidden),
             nn.Tanh(),
             nn.Linear(hidden, hidden),
             nn.Tanh(),
             nn.Linear(hidden, 1)
         ) 
-        
-    def base_net(self, state):
-        base_net = F.relu(self.conv1(state))
-        base_net = F.relu(self.conv2(base_net))
-        base_net = F.relu(self.conv3(base_net))
-        base_net = base_net.reshape(-1, self.reshaped_size)
-        return base_net      
-        
     def actor(self, state):
-        x = self.base_net(state)
-        return self.actor_layer(x)
+        return self.actor_layer(state)
 
     def critic(self, state):
-        x = self.base_net(state)
-        return self.critic_layer(x)
-    
-class Agent42(object):
-    def __init__(self, env, player_id=1):
-        self.env = env
-        self.player_id = player_id # Set the player id that determines on which side the ai is going to play                        
-        self.name = "AI42"
+        return self.critic_layer(state)
+
+
+class Agent(object):
+    def __init__(self, policy):
         self.train_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self.policy = Policy().to(self.train_device)
-        self.prev_obs = None
-        
-        self.policy_old = self.policy.to(self.train_device)
+        self.policy = policy.to(self.train_device)
+        self.policy_old = policy.to(self.train_device)
         self.policy_old.load_state_dict(self.policy.state_dict()) 
-        self.optimizer = torch.optim.Adam(self.policy.parameters(), 
-                                          lr=5e-3, betas=(0.9,0.999))
+        self.optimizer = torch.optim.Adam(policy.parameters(), lr=5e-3, betas=(0.9,0.999))
         self.gamma = 0.99
         self.eps_clip = 0.2  # TODO: Clip parameter for PPO
         self.K_epochs = 10 # TODO: Update policy for K epochs
@@ -72,13 +49,6 @@ class Agent42(object):
         self.rewards = []
         self.dones = []
         self.MseLoss = nn.MSELoss()
-
-    def get_name(self):
-        """ Interface function to retrieve the agents name """
-        return self.name
-
-    def reset(self):
-        self.prev_obs = None
 
     # Monte Carlo estimate of state rewards
     def discount_rewards(self):
@@ -137,59 +107,38 @@ class Agent42(object):
         # Clear memory
         self.states, self.action_probs, self.actions, self.rewards = [], [], [], []
 
-    def get_action(self, observation):
-        """ Interface function that returns the action that the agent 
-        takes based on the observation """
-        state = self.preprocess_observation(observation)
+
+    def get_action(self, state, evaluation=False):
+
+        x = torch.from_numpy(state).float().to(self.train_device)
         # Pass state x through the actor network 
-        action_probs = self.policy.actor(state)
+        action_probs = self.policy.actor(x)
         action_distribution = Categorical(action_probs)
 
         action = action_distribution.sample()
-        action_prob = action_distribution.log_prob(action)
-        self.store_transition(state.squeeze(0), action_prob, action)
-        return action
+        act_log_prob = action_distribution.log_prob(action)
 
-    def preprocess_observation(self, observation):
-        observation = observation[::2, ::2].mean(axis=-1)
-        observation = np.expand_dims(observation, axis=-1)
-        if self.prev_obs is None:
-            self.prev_obs = observation
-        stack_ob = np.concatenate((self.prev_obs, observation), axis=-1)
-        stack_ob = torch.from_numpy(stack_ob).float().unsqueeze(0).to(self.train_device)
-        stack_ob = stack_ob.transpose(1, 3)
-        return stack_ob
-    
-    def store_transition(self, state, action_prob, action):
+        return action, act_log_prob
+
+
+    def store_transition(self, observation, action_prob, action_taken, reward, done, model):
+        
+        state = extract_state(observation, model)  
+        state = torch.from_numpy(state).float().to(self.train_device)
         self.states.append(state)
         self.action_probs.append(action_prob)
-        self.actions.append(action)
-    
-    def store_result(self, reward, done):
+        self.actions.append(action_taken)
         self.rewards.append(reward)
         self.dones.append(done)
-    
-    def load_model(self):
-        weights = torch.load("model.mdl")
-        self.policy.load_state_dict(weights, strict=False)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def store_transition_cheating(self, env, action_prob, action_taken, reward, done, player_id):
+        
+        state = extract_state_cheating(env, player_id)
+        state = torch.from_numpy(state).float().to(self.train_device)
+        self.states.append(state)
+        self.action_probs.append(action_prob)
+        self.actions.append(action_taken)
+        self.rewards.append(reward)
+        self.dones.append(done)
 
