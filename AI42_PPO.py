@@ -65,7 +65,7 @@ class Agent42(object):
                                           lr=5e-3, betas=(0.9,0.999))
         self.gamma = 0.99
         self.eps_clip = 0.2  # TODO: Clip parameter for PPO
-        self.K_epochs = 10 # TODO: Update policy for K epochs
+        self.K_epochs = 4 # TODO: Update policy for K epochs
         self.actions = []
         self.states = []
         self.action_probs = []

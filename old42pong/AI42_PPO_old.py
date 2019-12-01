@@ -1,5 +1,5 @@
 """Created by Matzof on Sat Nov 16 22:23:22 2019"""
-from agent_PPO import Agent, Policy
+from agent_PPO_old import Agent, Policy
 from utils import extract_state, extract_state_cheating
 #%%
 class AI42(object):

@@ -2,7 +2,7 @@
 import gym
 
 #import wimblepong
-from AI42_PPO import AI42
+from AI42_PPO_old import AI42
 from wimblepong.simple_ai import SimpleAi
 from utils import plot_rewards, extract_state_cheating
 import torch

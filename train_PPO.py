@@ -1,7 +1,6 @@
 """Created by Matzof on Fri Nov 15 16:22:49 2019"""
 import gym
 
-#import wimblepong
 from AI42_PPO import Agent42
 from wimblepong.fast_ai import FastAi
 # %%
@@ -10,7 +9,6 @@ env = gym.make("WimblepongVisualMultiplayer-v0")
 # Parameters
 render = False
 num_episodes = 1000000
-TARGET_UPDATE = 20
 
 # Define the player IDs for both SimpleAI agents
 player_id = 1
@@ -61,8 +59,8 @@ for ep in range(num_episodes):
         timesteps += 1
 
         # Count the wins
-        if render:
-            env.render()        
+#        if render:
+#            env.render()        
         
         # PPO Update   
         if timesteps % 3000 == 0:
