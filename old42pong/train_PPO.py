@@ -11,7 +11,7 @@ from keras.models import load_model
 env = gym.make("WimblepongVisualMultiplayer-v0")
 # %%
 # Parameters
-render = False
+render = True
 num_episodes = 1000000
 TARGET_UPDATE = 20
 
@@ -95,7 +95,7 @@ for ep in range(num_episodes):
                 sum(win_history)/len(win_history), rew1))
     length_ep = 0
 
-    # plot_rewards(length_history)
+    # plot_rewards(length_history).
 
 
 
