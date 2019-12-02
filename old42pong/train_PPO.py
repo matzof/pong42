@@ -95,7 +95,7 @@ for ep in range(num_episodes):
                 sum(win_history)/len(win_history), rew1))
     length_ep = 0
 
-    # plot_rewards(length_history)
+    # plot_rewards(length_history).
 
 
 
