@@ -12,7 +12,7 @@ class Policy(torch.nn.Module):
         self.conv1 = torch.nn.Conv2d(2, 32, 3, 2)
         self.conv2 = torch.nn.Conv2d(32, 64, 3, 2)
         self.conv3 = torch.nn.Conv2d(64, 128, 3, 2)
-        self.reshaped_size = 128*11*10
+        self.reshaped_size = 128*7*7
         self.fc1_actor = torch.nn.Linear(self.reshaped_size, self.hidden)
         self.fc1_critic = torch.nn.Linear(self.reshaped_size, self.hidden)
         self.fc2_value = torch.nn.Linear(self.hidden, 1)
@@ -149,7 +149,7 @@ class Agent42(object):
         return action
 
     def preprocess_observation(self, observation):
-        observation = observation[::2, ::2].mean(axis=-1)
+        observation = observation[::3, ::3].mean(axis=-1)
         observation = np.expand_dims(observation, axis=-1)
         if self.prev_obs is None:
             self.prev_obs = observation
