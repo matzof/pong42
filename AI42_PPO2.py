@@ -149,7 +149,7 @@ class Agent42(object):
         return action
 
     def preprocess_observation(self, observation):
-        observation = observation[::2, ::2].mean(axis=-1)
+        observation = observation[::4, ::4].mean(axis=-1)
         observation = np.expand_dims(observation, axis=-1)
         if self.prev_obs is None:
             self.prev_obs = observation
