@@ -63,7 +63,7 @@ for ep in range(num_episodes):
 #            env.render()        
         
         # PPO Update   
-        if timesteps % 1000 == 0:
+        if timesteps % 500 == 0:
             print("Updating (  .) (   .)\t(  .) (   .)\t(  .) (   .)\t(  .) (   .)")
             player.PPO_update() 
 

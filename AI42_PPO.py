@@ -62,7 +62,7 @@ class Agent42(object):
         self.policy_old = self.policy.to(self.train_device)
         self.policy_old.load_state_dict(self.policy.state_dict()) 
         self.optimizer = torch.optim.Adam(self.policy.parameters(), 
-                                          lr=5e-4, betas=(0.9,0.999))
+                                          lr=1e-4, betas=(0.9,0.999))
         self.gamma = 0.99
         self.eps_clip = 0.2  # TODO: Clip parameter for PPO
         self.K_epochs = 4 # TODO: Update policy for K epochs
