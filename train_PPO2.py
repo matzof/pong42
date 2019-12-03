@@ -64,9 +64,7 @@ for ep in range(num_episodes):
         if timesteps % horizon == 0:
             print("Updating ------------------------------")
             player.PPO_update() 
-            timestep = 0
        
-
 
     # when done:
     win_history.append(1 if rew1==10 else 0)

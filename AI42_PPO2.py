@@ -158,7 +158,7 @@ class Agent42(object):
         stack_ob = stack_ob.transpose(1, 3)
         return stack_ob
     
-    def store_transition(self, state, action_prob, action):
+    def store_transition(self, state, action_prob, action, reward, done):
         self.states.append(state)
         self.action_probs.append(action_prob)
         self.actions.append(action)
