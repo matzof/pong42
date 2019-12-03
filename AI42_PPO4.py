@@ -1,4 +1,4 @@
-# PPO2: hyperparameter tuned compared to PPO1
+# PPO3: use one single forward fucntion instead of distinguish as actor and critic forward as PPO3
 
 import numpy as np
 import torch
@@ -11,45 +11,28 @@ class Policy(torch.nn.Module):
         super().__init__()
         self.action_space = action_space
         self.hidden = hidden
-        self.conv1 = torch.nn.Conv2d(2, 32, 3, 2)
-        self.conv2 = torch.nn.Conv2d(32, 64, 3, 2)
-        self.conv3 = torch.nn.Conv2d(64, 128, 3, 2)
-        self.reshaped_size = 128*7*7
-        self.fc1_actor = torch.nn.Linear(self.reshaped_size, self.hidden)
-        self.fc1_critic = torch.nn.Linear(self.reshaped_size, self.hidden)
-        self.fc2_value = torch.nn.Linear(self.hidden, 1)
+        self.conv1 = torch.nn.Conv2d(2, 32, 8, 4)
+        self.conv2 = torch.nn.Conv2d(32, 64, 4, 2)
+        self.conv3 = torch.nn.Conv2d(64, 64, 3, 1)
+        self.reshaped_size = 64*9*9
+        self.fc1 = nn.Linear(self.reshaped_size, hidden)
+        self.fc2 = nn.Linear(hidden, hidden)
+        self.fc3_action = nn.Linear(hidden, action_space)
+        self.fc3_value = nn.Linear(hidden, 1)
         
-        self.actor_layer = nn.Sequential(
-            nn.Linear(self.reshaped_size, hidden),
-            nn.Tanh(),
-            nn.Linear(hidden, hidden),
-            nn.Tanh(),
-            nn.Linear(hidden, action_space),
-            nn.Softmax(dim=-1)
-        )
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+        x = x.reshape(-1, self.reshaped_size)
+        x = F.tanh(self.fc1(x))
+        x = F.tanh(self.fc2(x))
 
-        self.critic_layer = nn.Sequential(
-            nn.Linear(self.reshaped_size, hidden),
-            nn.Tanh(),
-            nn.Linear(hidden, hidden),
-            nn.Tanh(),
-            nn.Linear(hidden, 1)
-        ) 
-        
-    def base_net(self, state):
-        base_net = F.relu(self.conv1(state))
-        base_net = F.relu(self.conv2(base_net))
-        base_net = F.relu(self.conv3(base_net))
-        base_net = base_net.reshape(-1, self.reshaped_size)
-        return base_net      
-        
-    def actor(self, state):
-        x = self.base_net(state)
-        return self.actor_layer(x)
+        action_probs = F.softmax(self.fc3_action(x))
+        values = self.fc3_value(x)
 
-    def critic(self, state):
-        x = self.base_net(state)
-        return self.critic_layer(x)
+        return action_probs, values
+
     
 class Agent42(object):
     def __init__(self, env, player_id=1):
@@ -108,13 +91,13 @@ class Agent42(object):
         for _ in range(self.K_epochs):
             # Evaluate old actions and values: 
             # Pass old states to actor layers
-            action_probs = self.policy.actor(old_states)
+            action_probs, _ = self.policy.forward(old_states)
             action_distribution = Categorical(action_probs)
             # Caculate action log probability and entropy given old actions
             action_probs = action_distribution.log_prob(old_actions)
             dist_entropy = action_distribution.entropy()
             # Pass old states to  critic layers
-            values = self.policy.critic(old_states)
+            _, values = self.policy.forward(old_states)
 
             # Caculate the loss:
             # Finding the ratio (pi_theta / pi_theta__old) 
@@ -124,7 +107,7 @@ class Agent42(object):
             advantages = rewards - values.detach()
             surr1 =  ratios * advantages
             surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
-            loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(values, rewards) - 0.01 * dist_entropy
+            loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(values.squeeze(1), rewards) - 0.01 * dist_entropy
             
             # Take gradient step to update network parameters 
             self.optimizer.zero_grad()
@@ -142,7 +125,7 @@ class Agent42(object):
         takes based on the observation """
         state = self.preprocess_observation(observation)
         # Pass state x through the actor network 
-        action_probs = self.policy.actor(state)
+        action_probs, _ = self.policy.forward(state)
         action_distribution = Categorical(action_probs)
 
         action = action_distribution.sample()
@@ -151,7 +134,7 @@ class Agent42(object):
         return action
 
     def preprocess_observation(self, observation):
-        observation = observation[::3, ::3].mean(axis=-1)
+        observation = observation[::2, ::2].mean(axis=-1)
         observation = np.expand_dims(observation, axis=-1)
         if self.prev_obs is None:
             self.prev_obs = observation

@@ -1,10 +1,11 @@
-"""Created by Matzof on Sat Nov 16 22:23:22 2019"""
+# PPO: basic version 
+ 
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.distributions.categorical import Categorical
-#%%
+
 class Policy(torch.nn.Module):
     def __init__(self, action_space = 3, hidden = 64):
         super().__init__()

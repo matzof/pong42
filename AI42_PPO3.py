@@ -1,4 +1,4 @@
-# PPO2: hyperparameter tuned compared to PPO1
+# PPO3: CNN arch different from PPO2, downsampling 2
 
 import numpy as np
 import torch
@@ -11,27 +11,24 @@ class Policy(torch.nn.Module):
         super().__init__()
         self.action_space = action_space
         self.hidden = hidden
-        self.conv1 = torch.nn.Conv2d(2, 32, 3, 2)
-        self.conv2 = torch.nn.Conv2d(32, 64, 3, 2)
-        self.conv3 = torch.nn.Conv2d(64, 128, 3, 2)
-        self.reshaped_size = 128*7*7
-        self.fc1_actor = torch.nn.Linear(self.reshaped_size, self.hidden)
-        self.fc1_critic = torch.nn.Linear(self.reshaped_size, self.hidden)
-        self.fc2_value = torch.nn.Linear(self.hidden, 1)
+        self.conv1 = torch.nn.Conv2d(2, 32, 8, 4)
+        self.conv2 = torch.nn.Conv2d(32, 64, 4, 2)
+        self.conv3 = torch.nn.Conv2d(64, 64, 3, 1)
+        self.reshaped_size = 64*9*9
         
         self.actor_layer = nn.Sequential(
             nn.Linear(self.reshaped_size, hidden),
-            nn.Tanh(),
-            nn.Linear(hidden, hidden),
-            nn.Tanh(),
+            nn.Tanh(), # ReLU?
+            nn.Linear(hidden, hidden), # One layer less?
+            nn.Tanh(), # ReLU?
             nn.Linear(hidden, action_space),
-            nn.Softmax(dim=-1)
+            nn.Softmax(dim=-1) # softplus?
         )
 
         self.critic_layer = nn.Sequential(
             nn.Linear(self.reshaped_size, hidden),
             nn.Tanh(),
-            nn.Linear(hidden, hidden),
+            nn.Linear(hidden, hidden), 
             nn.Tanh(),
             nn.Linear(hidden, 1)
         ) 
@@ -124,7 +121,7 @@ class Agent42(object):
             advantages = rewards - values.detach()
             surr1 =  ratios * advantages
             surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
-            loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(values, rewards) - 0.01 * dist_entropy
+            loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(values.squeeze(1), rewards) - 0.01 * dist_entropy
             
             # Take gradient step to update network parameters 
             self.optimizer.zero_grad()
@@ -151,7 +148,7 @@ class Agent42(object):
         return action
 
     def preprocess_observation(self, observation):
-        observation = observation[::3, ::3].mean(axis=-1)
+        observation = observation[::2, ::2].mean(axis=-1)
         observation = np.expand_dims(observation, axis=-1)
         if self.prev_obs is None:
             self.prev_obs = observation

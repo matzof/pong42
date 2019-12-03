@@ -8,7 +8,7 @@ env = gym.make("WimblepongVisualMultiplayer-v0")
 # Parameters
 render = False
 num_episodes = 1000000
-horizon = 2000 # TODO: adapt the PPO Update frequency
+horizon = 4000 # TODO: adapt the PPO Update frequency
 
 # Define the player IDs for both SimpleAI agents
 player_id = 1
@@ -50,7 +50,6 @@ for ep in range(num_episodes):
         # TODO: adjust reward for training purpose
         # rew1 += round(length_ep/30)
         player.store_result(rew1, done)
-        culmulative_reward += rew1
 
         # store total length of each episode
         length_ep += 1
