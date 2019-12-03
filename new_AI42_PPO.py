@@ -117,11 +117,11 @@ class Agent42(object):
             loss = (-torch.min(surr1, surr2) 
                     + 0.5 * self.MseLoss(values.squeeze(1), rewards) 
                     - 0.01 * dist_entropy)
-            print("loss:", loss)
             
             # Take gradient step to update network parameters 
             self.optimizer.zero_grad()
             loss.mean().backward()
+            print('Loss:', loss)
             self.optimizer.step()
 
         # Copy new weights into old policy:
