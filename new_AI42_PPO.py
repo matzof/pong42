@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.distributions.categorical import Categorical
+import random
 
 class Policy(torch.nn.Module):
     def __init__(self, action_space = 3, hidden = 64):
@@ -75,34 +76,39 @@ class Agent42(object):
 
     # Update the actor-critic
     def PPO_update(self):
-
         # Compute and normalize discounted rewards (use the discount_rewards function)
-        rewards = self.discount_rewards()
-        rewards = torch.tensor(rewards).to(self.train_device)
-        rewards = (torch.sub(rewards, rewards.mean())).div(rewards.var() + 1e-5)
-
-        # Convert list to tensor
-        old_states = torch.stack(self.states, dim=0).to(self.train_device).detach()
-        old_action_probs = torch.stack(self.action_probs, dim=0).to(self.train_device).detach()
-        old_actions = torch.stack(self.actions, dim=0).to(self.train_device).detach()
-        
-        # Clear memory
-        self.states, self.action_probs, self.actions, self.rewards, self.dones = [], [], [], [], []
+        rewards = np.asarray(self.discount_rewards())
+        rewards = (rewards - np.mean(rewards))/np.var(rewards) + 1e-5
         
         for _ in range(self.K_epochs):
-            # Evaluate old actions and values: 
-            # Pass old states to actor layers
-            action_probs, _ = self.policy.forward(old_states)
+            # sample a random 50% of the data stored in every epoch
+            len_history = len(self.actions)
+            n_batch = round(len_history*0.5)
+            idxs = random.sample(range(len_history), n_batch)
+            
+            rewards = torch.tensor([rewards[idx] for idx in idxs]).to(self.train_device)
+            batch_states = [self.states[idx] for idx in idxs]
+            batch_action_probs = [self.action_probs[idx] for idx in idxs]
+            batch_actions = [self.actions[idx] for idx in idxs]
+    
+            # Convert list to tensor
+            batch_states = torch.stack(batch_states, dim=0).to(self.train_device).detach()
+            batch_action_probs = torch.stack(batch_action_probs, dim=0).to(self.train_device).detach()
+            batch_actions = torch.stack(batch_actions, dim=0).to(self.train_device).detach()
+            
+            # Evaluate batch actions and values: 
+            # Pass batch states to actor layers
+            action_probs, _ = self.policy.forward(batch_states)
             action_distribution = Categorical(action_probs)
-            # Caculate action log probability and entropy given old actions
-            action_probs = action_distribution.log_prob(old_actions)
+            # Caculate action log probability and entropy given batch actions
+            action_probs = action_distribution.log_prob(batch_actions)
             dist_entropy = action_distribution.entropy()
-            # Pass old states to  critic layers
-            _, values = self.policy.forward(old_states)
+            # Pass batch states to  critic layers
+            _, values = self.policy.forward(batch_states)
 
             # Caculate the loss:
-            # Finding the ratio (pi_theta / pi_theta__old) 
-            ratios = torch.exp(action_probs - old_action_probs)
+            # Finding the ratio (pi_theta / pi_theta__batch) 
+            ratios = torch.exp(action_probs - batch_action_probs)
             
             # Finding Surrogate Loss:
             advantages = rewards - values.detach()
@@ -120,6 +126,9 @@ class Agent42(object):
 
         # Copy new weights into old policy:
         self.policy_old.load_state_dict(self.policy.state_dict())
+        
+        # Clear memory
+        self.states, self.action_probs, self.actions, self.rewards, self.dones = [], [], [], [], []
 
     def get_action(self, observation):
         """ Interface function that returns the action that the agent 
