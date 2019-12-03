@@ -8,7 +8,7 @@ from new_model import Policy
 from wimblepong import wimblepong
 from wimblepong.simple_ai import SimpleAi
 #%%
-# env = gym.make("WimblepongVisualMultiplayer-v0")
+env = gym.make("WimblepongVisualMultiplayer-v0")
 #%%
 env.reset()
 
