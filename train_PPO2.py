@@ -8,7 +8,7 @@ env = gym.make("WimblepongVisualMultiplayer-v0")
 # Parameters
 render = False
 num_episodes = 1000000
-horizon =2000 # TODO: adapt the PPO Update frequency
+horizon = 2000 # TODO: adapt the PPO Update frequency
 
 # Define the player IDs for both SimpleAI agents
 player_id = 1
