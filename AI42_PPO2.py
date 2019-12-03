@@ -1,4 +1,4 @@
-# PPO2: hyperparameter tuned compared to PPO1
+# PPO2: hyperparameter tuned compared to PPO1, downsampling 3 for GPU memory limit
 
 import numpy as np
 import torch
