@@ -26,7 +26,7 @@ class Policy(torch.nn.Module):
         x = x.reshape(-1, self.reshaped_size)
         x = F.relu(self.fc1(x))
 
-        action_probs = F.softmax(self.fc2_action(x))
+        action_probs = F.softmax(self.fc2_action(x), -1)
         values = self.fc2_value(x)
 
         return action_probs, values
@@ -126,26 +126,30 @@ class Agent42(object):
     def get_action(self, observation):
         """ Interface function that returns the action that the agent 
         takes based on the observation """
-        state = self.preprocess_observation(observation)
+        observation = self.preprocess_observation(observation)
+        stack_ob = self.stack_obs(observation)
         # Pass state x through the actor network 
-        action_probs, _ = self.policy.forward(state)
+        action_probs, _ = self.policy.forward(stack_ob)
         action_distribution = Categorical(action_probs)
 
         action = action_distribution.sample()
         action_prob = action_distribution.log_prob(action)
-        self.store_transition(state.squeeze(0), action_prob, action)
-        self.prev_obs = state
+        self.store_transition(stack_ob.squeeze(0), action_prob, action)
+        self.prev_obs = observation
         return action
 
     def preprocess_observation(self, obs):
         obs = obs[::2, ::2].mean(axis=-1) # grayscale and downsample
         obs[obs < 50] = 0 # set background as 0
         obs[obs != 0] = 1 # set paddles and ball as 1
-        obs = np.expand_dims(obs, axis=-1)
-        obs = torch.from_numpy(obs.astype(np.float32).ravel()).unsqueeze(0)
+        obs = np.reshape(obs, (1, obs.shape[0], obs.shape[1]))
+        return obs
+    
+    def stack_obs(self, obs):
         if self.prev_obs is None:
             self.prev_obs = obs
-        stack_ob = torch.cat([obs, self.prev_obs], dim=1)
+        stack_ob = np.concatenate((self.prev_obs, obs), axis=0)
+        stack_ob = torch.from_numpy(stack_ob).unsqueeze(0).float().to(self.train_device)
         return stack_ob
     
     def store_transition(self, state, action_prob, action):

@@ -1,6 +1,6 @@
 import gym
 
-from AI42_PPO5 import Agent42
+from AI42_PPO5_fixed import Agent42
 from wimblepong.simple_ai import SimpleAi
 #%%
 env = gym.make("WimblepongVisualMultiplayer-v0")
