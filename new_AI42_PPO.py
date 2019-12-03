@@ -107,9 +107,7 @@ class Agent42(object):
             # Finding Surrogate Loss:
             advantages = rewards - values.detach()
             surr1 =  ratios * advantages
-            print("surr1:", surr1)
             surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
-            print("surr2:", surr2)
             loss = (-torch.min(surr1, surr2) 
                     + 0.5 * self.MseLoss(values.squeeze(1), rewards) 
                     - 0.01 * dist_entropy)
