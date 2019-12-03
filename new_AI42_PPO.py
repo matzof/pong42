@@ -86,7 +86,7 @@ class Agent42(object):
             n_batch = round(len_history*0.5)
             idxs = random.sample(range(len_history), n_batch)
             
-            rewards = torch.tensor([rewards[idx] for idx in idxs]).to(self.train_device)
+            batch_rewards = torch.tensor([rewards[idx] for idx in idxs]).to(self.train_device)
             batch_states = [self.states[idx] for idx in idxs]
             batch_action_probs = [self.action_probs[idx] for idx in idxs]
             batch_actions = [self.actions[idx] for idx in idxs]
@@ -111,17 +111,17 @@ class Agent42(object):
             ratios = torch.exp(action_probs - batch_action_probs)
             
             # Finding Surrogate Loss:
-            advantages = rewards - values.detach()
+            advantages = batch_rewards - values.detach()
             surr1 =  ratios * advantages
             surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
             loss = (-torch.min(surr1, surr2) 
-                    + 0.5 * self.MseLoss(values.squeeze(1), rewards) 
+                    + 0.5 * self.MseLoss(values.squeeze(1), batch_rewards) 
                     - 0.01 * dist_entropy)
             
             # Take gradient step to update network parameters 
             self.optimizer.zero_grad()
             loss.mean().backward()
-            print('Loss:', loss)
+            print('Loss:', loss.mean())
             self.optimizer.step()
 
         # Copy new weights into old policy:
