@@ -29,20 +29,6 @@ class Policy(nn.Module):
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
         return x
-    
-    def state_to_tensor(self, obs):
-        obs = obs[::2, ::2].mean(axis=-1) # grayscale and downsample
-        obs[obs < 50] = 0 # set background as 0
-        obs[obs != 0] = 1 # set paddles and ball as 1
-        obs = np.expand_dims(obs, axis=-1)        
-        return torch.from_numpy(obs.astype(np.float32).ravel()).unsqueeze(0)
-
-    def pre_process(self, obs, prev_obs):
-        if prev_obs is None:
-            prev_obs = obs
-        obs = self.state_to_tensor(obs)
-        prev_obs = self.state_to_tensor(prev_obs)  
-        return torch.cat([obs, prev_obs], dim=1)
 
     def state_to_tensor_cnn(self, obs):
         obs = obs[::2, ::2].mean(axis=-1) # grayscale and downsample
