@@ -30,7 +30,7 @@ for it in range(100000):
 
             d_obs = policy.pre_process(ob1, prev_obs)
             with torch.no_grad():
-                action, action_prob = policy(d_obs)
+                action, action_prob = policy.get_action(d_obs)
             
             prev_obs = ob1
             action1 = policy.convert_action(action)
@@ -74,7 +74,7 @@ for it in range(100000):
         #advantage_batch = (advantage_batch - advantage_batch.mean()) / advantage_batch.std()
               
         opt.zero_grad()
-        loss = policy(d_obs_batch, action_batch, action_prob_batch, advantage_batch)
+        loss = policy.PPO_update(d_obs_batch, action_batch, action_prob_batch, advantage_batch)
         loss.backward()
         opt.step()
     

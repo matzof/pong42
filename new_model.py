@@ -35,7 +35,7 @@ class Policy(nn.Module):
     def convert_action(self, action):
         return action + 1
 
-    def forward(self, d_obs, action=None, action_prob=None, advantage=None, deterministic=False):
+    def get_action(self, d_obs, action=None, action_prob=None, advantage=None, deterministic=False):
         if action is None:
             with torch.no_grad():
                 logits = self.layers(d_obs)
@@ -53,15 +53,16 @@ class Policy(nn.Module):
         loss = F.cross_entropy(logits, action, reduction='none') * advantage
         return loss.mean()
         '''
-
+        
+    def PPO_update(self, d_obs, action=None, action_prob=None, advantage=None, deterministic=False):
         # PPO
         vs = np.array([[1., 0.], [0., 1.]])
         ts = torch.FloatTensor(vs[action.cpu().numpy()])
         
         logits = self.layers(d_obs)
-        r = torch.sum(F.softmax(logits, dim=1) * ts, dim=1) / action_prob
-        loss1 = r * advantage
-        loss2 = torch.clamp(r, 1-self.eps_clip, 1+self.eps_clip) * advantage
+        ratios = torch.sum(F.softmax(logits, dim=1) * ts, dim=1) / action_prob
+        loss1 = ratios * advantage
+        loss2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantage
         loss = -torch.min(loss1, loss2)
         loss = torch.mean(loss)
 
