@@ -91,7 +91,7 @@ class Policy(nn.Module):
         
     def PPO_update(self, d_obs, action=None, action_prob=None, advantage=None, deterministic=False):
         # PPO
-        vs = np.array([[1., 0.], [0., 1.]])
+        vs = np.array([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])
         ts = torch.FloatTensor(vs[action.cpu().numpy()])
         
         logits = self.forward(d_obs)
