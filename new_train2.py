@@ -28,12 +28,12 @@ for it in range(100000):
         for t in range(190000):
             #env.render()
 
-            d_obs = policy.pre_process(ob1, prev_obs)
+            d_obs = policy.pre_process_cnn(ob1, prev_obs)
             with torch.no_grad():
                 action, action_prob = policy.get_action(d_obs)
             
             prev_obs = ob1
-            action1 = policy.convert_action(action)
+            action1 = action
             action2 = opponent.get_action()
             (ob1, ob2), (rew1, rew2), done, info = env.step((action1, action2))
             
