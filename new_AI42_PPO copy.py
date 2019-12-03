@@ -54,7 +54,7 @@ class Agent42(object):
         self.action_probs = []
         self.rewards = []
         self.dones = []
-        self.MseLoss = nn.MSELoss()
+        # self.MseLoss = nn.MSELoss()
 
     def get_name(self):
         """ Interface function to retrieve the agents name """
@@ -102,7 +102,7 @@ class Agent42(object):
             action_distribution = Categorical(action_probs)
             # Caculate action log probability and entropy given batch actions
             action_probs = action_distribution.log_prob(batch_actions)
-            dist_entropy = action_distribution.entropy()
+            # dist_entropy = action_distribution.entropy()
             # Pass batch states to  critic layers
             _, values = self.policy.forward(batch_states)
 
@@ -111,12 +111,10 @@ class Agent42(object):
             ratios = torch.exp(action_probs - batch_action_probs)
             
             # Finding Surrogate Loss:
-            advantages = batch_rewards - values.detach()
-            surr1 =  ratios * advantages
+            advantages = batch_rewards
+            surr1 =  ratios * advantages - batch_rewards
             surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
-            loss = (-torch.min(surr1, surr2) 
-                    + 0.5 * self.MseLoss(values.squeeze(1), batch_rewards) 
-                    - 0.01 * dist_entropy)
+            loss = -torch.min(surr1, surr2) 
             
             # Take gradient step to update network parameters 
             self.optimizer.zero_grad()
