@@ -1,4 +1,4 @@
-# PPO3: use one single forward fucntion instead of distinguish as actor and critic forward as PPO3
+# PPO4: use one single forward fucntion instead of distinguish as actor and critic forward as PPO3
 
 import numpy as np
 import torch
