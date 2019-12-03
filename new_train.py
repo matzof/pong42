@@ -65,7 +65,7 @@ for it in range(100000):
     
     # update policy
     for _ in range(5):
-        n_batch = len(action_history)*0.7
+        n_batch = round(len(action_history)*0.7)
         idxs = random.sample(range(len(action_history)), n_batch)
         d_obs_batch = torch.cat([d_obs_history[idx] for idx in idxs], 0)
         action_batch = torch.LongTensor([action_history[idx] for idx in idxs])
