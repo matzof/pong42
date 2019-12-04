@@ -28,10 +28,10 @@ class Policy(torch.nn.Module):
 #        x = x.reshape(-1, self.reshaped_size)
         x = F.relu(self.fc1(x))
 
-        action_probs = F.softmax(self.fc2_action(x), -1)
+        action_logits = self.fc2_action(x)
         values = self.fc2_value(x)
 
-        return action_probs, values
+        return action_logits, values
 
     
 class Agent42(object):
@@ -77,6 +77,7 @@ class Agent42(object):
 
     # Update the actor-critic
     def PPO_update(self):
+        self.optimizer.zero_grad()
         # Compute and normalize discounted rewards (use the discount_rewards function)
         rewards = np.asarray(self.discount_rewards())
         rewards = (rewards - np.mean(rewards))/np.var(rewards) + 1e-5
@@ -87,41 +88,39 @@ class Agent42(object):
             n_batch = round(len_history*0.7)
             idxs = random.sample(range(len_history), n_batch)
             
-            batch_rewards = torch.tensor([rewards[idx] for idx in idxs]).to(self.train_device)
-            batch_states = [self.states[idx] for idx in idxs]
-            batch_action_probs = [self.action_probs[idx] for idx in idxs]
-            batch_actions = [self.actions[idx] for idx in idxs]
+            old_rewards = torch.tensor([rewards[idx] for idx in idxs]).to(self.train_device)
+            old_states = [self.states[idx] for idx in idxs]
+            old_action_probs = [self.action_probs[idx] for idx in idxs]
+            old_actions = [self.actions[idx] for idx in idxs]
     
             # Convert list to tensor
-            batch_states = torch.stack(batch_states, dim=0).to(self.train_device).detach()
-            batch_action_probs = torch.stack(batch_action_probs, dim=0).to(self.train_device).detach()
-            batch_actions = torch.stack(batch_actions, dim=0).to(self.train_device).detach()
+            old_states = torch.stack(old_states, dim=0).to(self.train_device).detach()
+            old_action_probs = torch.stack(old_action_probs, dim=0).to(self.train_device).detach()
+            old_actions = torch.stack(old_actions, dim=0).to(self.train_device).detach()
             
             # Evaluate batch actions and values: 
             # Pass batch states to actor layers
-            action_probs, _ = self.policy.forward(batch_states)
-            action_distribution = Categorical(action_probs)
+            action_logits, values = self.policy.forward(old_states)
+            action_distribution = Categorical(logits=action_logits)
             # Caculate action log probability and entropy given batch actions
-            action_probs = action_distribution.log_prob(batch_actions)
             dist_entropy = action_distribution.entropy()
-            # Pass batch states to  critic layers
-            _, values = self.policy.forward(batch_states)
 
             # Caculate the loss:
             # Finding the ratio (pi_theta / pi_theta__batch) 
-            ratios = torch.exp(action_probs - batch_action_probs)
+            vs = np.array([[1., 0.], [0., 1.]])
+            ts = torch.FloatTensor(vs[old_actions.cpu().numpy()])
+            ratios = torch.sum(F.softmax(action_logits, dim=1) * ts, dim=1) / old_action_probs
             
             # Finding Surrogate Loss:
-            advantages = batch_rewards - values.detach()
+            advantages = old_rewards - values.detach()
             surr1 =  ratios * advantages
             surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
             
             loss = (-torch.min(surr1, surr2).mean()
-                    + 0.5 * self.MseLoss(values.squeeze(1), batch_rewards) 
+                    + 0.5 * self.MseLoss(values.squeeze(1), old_rewards) 
                     - 0.01 * dist_entropy.mean())
             
             # Take gradient step to update network parameters 
-            self.optimizer.zero_grad()
             loss.backward()
             print('Loss:', loss)
             self.optimizer.step()
@@ -133,19 +132,21 @@ class Agent42(object):
         self.states, self.action_probs, self.actions, self.rewards, self.dones = [], [], [], [], []
 
     def get_action(self, observation):
-        """ Interface function that returns the action that the agent 
-        takes based on the observation """
-        observation = self.preprocess_observation(observation)
-        stack_ob = self.stack_obs(observation)
-        # Pass state x through the actor network 
-        action_probs, _ = self.policy.forward(stack_ob)
-        action_distribution = Categorical(action_probs)
-
-        action = action_distribution.sample()
-        action_prob = action_distribution.log_prob(action)
-        self.store_transition(stack_ob.squeeze(0), action_prob, action)
-        self.prev_obs = observation
-        return action + 1
+        with torch.no_grad():
+            """ Interface function that returns the action that the agent 
+            takes based on the observation """
+            observation = self.preprocess_observation(observation)
+            stack_ob = self.stack_obs(observation)
+            # Pass state x through the actor network 
+            action_logits, _ = self.policy.forward(stack_ob)
+            action_distribution = Categorical(logits = action_logits)
+    
+            action = action_distribution.sample().cpu()[0].int()
+            action_prob = action_distribution.probs[0, action].detach().cpu().float()
+            
+            self.store_transition(stack_ob.squeeze(0), action_prob, action)
+            self.prev_obs = observation
+            return action + 1
 
     def preprocess_observation_conv(self, obs):
         obs = obs[::2, ::2].mean(axis=-1) # grayscale and downsample
