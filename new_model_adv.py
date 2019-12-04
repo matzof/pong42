@@ -1,4 +1,5 @@
 # based on new model original, add value output of policy network into advantage 
+# -> turns out doesnt learn
 
 import numpy as np
 import torch
