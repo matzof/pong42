@@ -5,16 +5,10 @@ import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F
-from PIL import Image
-import random
 
 class Policy(nn.Module):
     def __init__(self, action_space = 3, hidden = 64):
         super().__init__()
-        self.train_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        self.gamma = 0.99
-        self.eps_clip = 0.1
-
         self.conv1 = nn.Conv2d(2, 32, 8, 4)
         self.conv2 = nn.Conv2d(32, 64, 4, 2)
         self.conv3 = nn.Conv2d(64, 64, 3, 1)
@@ -33,6 +27,19 @@ class Policy(nn.Module):
         values = self.fc2_value(x)
         
         return logits, values
+
+class Agent42(object):
+    def __init__(self, env, player_id=1):
+        self.env = env
+        self.player_id = player_id # Set the player id that determines on which side the ai is going to play                        
+        self.name = "AI42"
+        self.train_device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.policy = Policy().to(self.train_device)
+        self.optimizer = torch.optim.Adam(self.policy.parameters(), lr=1e-3)
+
+        self.gamma = 0.99
+        self.eps_clip = 0.1
+
 
     def state_to_tensor_cnn(self, obs):
         obs = obs[::2, ::2].mean(axis=-1) # grayscale and downsample
@@ -55,7 +62,7 @@ class Policy(nn.Module):
     def get_action(self, d_obs, action=None, action_prob=None, advantage=None, deterministic=False):
         if action is None:
             with torch.no_grad():
-                logits, _ = self.forward(d_obs)
+                logits, _ = self.policy.forward(d_obs)
                 c = torch.distributions.Categorical(logits=logits)
                 action = int(c.sample().cpu().numpy()[0])
                 action_prob = float(c.probs[0, action].detach().cpu().numpy())
@@ -69,18 +76,12 @@ class Policy(nn.Module):
         '''
         
     def PPO_update(self, d_obs, action=None, action_prob=None, rewards=None, deterministic=False):
-        
-        # Convert list to tensor, push to device 
-        d_obs = torch.stack(d_obs, dim=0).to(self.train_device).detach()
-        action_prob = torch.stack(action_prob, dim=0).to(self.train_device).detach()
-        action = torch.stack(action, dim=0).to(self.train_device).detach()
-        rewards = torch.stack(rewards, dim=0).to(self.train_device).detach()
-    
+
         # PPO
         vs = np.array([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])
         ts = torch.FloatTensor(vs[action])
         
-        logits, values = self.forward(d_obs)
+        logits, values = self.policy.forward(d_obs)
         ratios = torch.sum(F.softmax(logits, dim=1) * ts, dim=1) / action_prob
         advantages = rewards - values.detach()
         loss1 = ratios * advantages
@@ -89,7 +90,6 @@ class Policy(nn.Module):
         loss = torch.mean(loss)
 
         return loss
-
 
 
 
