@@ -67,12 +67,12 @@ for it in range(100000):
     for _ in range(5):
         n_batch = round(len(action_history)*0.7)
         idxs = random.sample(range(len(action_history)), n_batch)
-        d_obs_batch = torch.cat([d_obs_history[idx] for idx in idxs], 0)
+
+        d_obs_batch = torch.cat([d_obs_history[idx] for idx in idxs], 0)    
         action_batch = torch.LongTensor([action_history[idx] for idx in idxs])
         action_prob_batch = torch.FloatTensor([action_prob_history[idx] for idx in idxs])
         rewards_batch = torch.FloatTensor([discounted_rewards[idx] for idx in idxs])
-        #advantage_batch = (advantage_batch - advantage_batch.mean()) / advantage_batch.std()
-              
+
         opt.zero_grad()
         loss = policy.PPO_update(d_obs_batch, action_batch, action_prob_batch, rewards_batch)
         loss.backward()

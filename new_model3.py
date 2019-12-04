@@ -69,9 +69,16 @@ class Policy(nn.Module):
         '''
         
     def PPO_update(self, d_obs, action=None, action_prob=None, rewards=None, deterministic=False):
+        
+        # Convert list to tensor, push to device 
+        d_obs = torch.stack(d_obs, dim=0).to(self.train_device).detach()
+        action_prob = torch.stack(action_prob, dim=0).to(self.train_device).detach()
+        action = torch.stack(action, dim=0).to(self.train_device).detach()
+        rewards = torch.stack(rewards, dim=0).to(self.train_device).detach()
+    
         # PPO
         vs = np.array([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])
-        ts = torch.FloatTensor(vs[action.cpu().numpy()])
+        ts = torch.FloatTensor(vs[action])
         
         logits, values = self.forward(d_obs)
         ratios = torch.sum(F.softmax(logits, dim=1) * ts, dim=1) / action_prob
