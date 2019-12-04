@@ -79,7 +79,7 @@ class Agent42(object):
 
         # PPO
         vs = np.array([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])
-        ts = torch.FloatTensor(vs[action.cpu().numpy()])
+        ts = torch.FloatTensor(vs[action.cpu().numpy()]).to(self.train_device).detach()    
         
         logits, values = self.policy.forward(d_obs)
         ratios = torch.sum(F.softmax(logits, dim=1) * ts, dim=1) / action_prob
