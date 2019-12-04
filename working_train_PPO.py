@@ -88,6 +88,7 @@ for it in range(num_iterations):
     # PPO Update
     print("Saving -----------------------------------------------")
     player.store_model(player.policy)
+    player.load_model()
     print("Updating ---------------------------------------------")
     player.PPO_update() 
     
