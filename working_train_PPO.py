@@ -2,6 +2,8 @@ import gym
 
 from working_AI42_PPO import Agent42
 from wimblepong.simple_ai import SimpleAi
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 #%%
 env = gym.make("WimblepongVisualMultiplayer-v0")
@@ -9,7 +11,6 @@ env = gym.make("WimblepongVisualMultiplayer-v0")
 # Parameters
 render = False
 num_iterations = 100000
-horizon = 9000 # TODO: adapt the PPO Update frequency
 
 # Define the player IDs for both SimpleAI agents
 player_id = 1
