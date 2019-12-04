@@ -84,7 +84,6 @@ for it in range(num_episodes):
         opt.step()
 
         print('V3 - Iteration %d -- Loss: %.3f' % (it, loss))
-        
 
 env.close()
 
