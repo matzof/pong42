@@ -1,4 +1,3 @@
-"""Created by Matzof on Tue Dec  3 16:28:14 2019"""
 import gym
 import numpy as np
 import random
