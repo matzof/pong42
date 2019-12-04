@@ -1,4 +1,4 @@
-# CNN + FCC for actor and critic forward respectively
+# PPO5: use one single forward fucntion, one less hidden fc than PPO4
 
 import numpy as np
 import torch
@@ -98,11 +98,13 @@ class Agent42(object):
             
             # Evaluate batch actions and values: 
             # Pass batch states to actor layers
-            action_probs, values = self.policy.forward(batch_states)
+            action_probs, _ = self.policy.forward(batch_states)
             action_distribution = Categorical(action_probs)
             # Caculate action log probability and entropy given batch actions
             action_probs = action_distribution.log_prob(batch_actions)
             dist_entropy = action_distribution.entropy()
+            # Pass batch states to  critic layers
+            _, values = self.policy.forward(batch_states)
 
             # Caculate the loss:
             # Finding the ratio (pi_theta / pi_theta__batch) 

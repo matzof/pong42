@@ -43,7 +43,7 @@ class Policy(nn.Module):
         obs = self.state_to_tensor_cnn(obs)
         prev_obs = self.state_to_tensor_cnn(prev_obs)  
         stack_ob = np.concatenate((prev_obs, obs), axis=0)
-        stack_ob = torch.from_numpy(stack_ob).unsqueeze(0).float().to(self.train_device)
+        stack_ob = torch.from_numpy(stack_ob).unsqueeze(0).float()
         return stack_ob
 
         obs = obs[::2, ::2].mean(axis=-1) # grayscale and downsample
