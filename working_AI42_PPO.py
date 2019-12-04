@@ -183,8 +183,11 @@ class Agent42(object):
     def store_model(self, policy):
         torch.save(policy, 'model.pth.tar')
     
-    def load_model(self):
-        self.policy = torch.load('model.pth.tar')
+    def load_model(self, policy):
+        checkpoint = torch.load('model.pth.tar')
+        policy.load_state_dict(checkpoint['state_dict'])
+        self.optimizer.load_state_dict(checkpoint['optimizer'])
+        return policy
         
 
 
