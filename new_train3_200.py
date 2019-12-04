@@ -83,7 +83,7 @@ for it in range(num_episodes):
         loss.backward()
         opt.step()
 
-        print('V3-horizon200 - Iteration %d -- Loss: %.3f' % (it, loss))
+        print('V3200 -- Iteration %d -- Loss: %.3f' % (it, loss))
 
 env.close()
 
