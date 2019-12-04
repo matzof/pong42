@@ -157,13 +157,13 @@ class Agent42(object):
         obs = obs[::2, ::2].mean(axis=-1) # grayscale and downsample
         obs[obs < 50] = 0 # set background as 0
         obs[obs != 0] = 1 # set paddles and ball as 1
-        obs = np.reshape(obs.ravel(), (1, len(obs.ravel)))
+        return obs.flatten()
     
     def stack_obs(self, obs):
         if self.prev_obs is None:
             self.prev_obs = obs
         stack_ob = np.concatenate((self.prev_obs, obs), axis=0)
-        stack_ob = torch.from_numpy(stack_ob).float().to(self.train_device)
+        stack_ob = torch.from_numpy(stack_ob).float().unsqueeze(0).to(self.train_device)
         return stack_ob
     
     def store_transition(self, state, action_prob, action):
