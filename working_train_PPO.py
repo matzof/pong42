@@ -26,6 +26,8 @@ win1 = 0
 culmulative_reward = 0
 length_history = []
 win_history = []
+mean_winrate_history = []
+mean_length_history = []
 
 for it in range(num_iterations):
     for ep in range(200):
@@ -68,16 +70,21 @@ for it in range(num_iterations):
               "Mean Length: {:.1f}".format(sum(length_history)/len(length_history)),
               "Winrate: {:.1f}%".format(100*sum(win_history)/len(win_history)))
         length_ep = 0
+    
     # PPO Update
     print("Updating ---------------------------------------------")
     player.PPO_update() 
     
+    # Plot Mean Reward History
+    mean_winrate_history.append(100*sum(win_history)/len(win_history))
+    mean_length_history.append(sum(length_history)/len(length_history))
     plt.figure(figsize=(20.0, 10.0))
     plt.xlabel("Number of Iterations (1 iteration is 200 episodes)")
-    plt.plot(length_history)
-    plt.legend("1", "2")
+    plt.plot(mean_winrate_history)
+    plt.plot(mean_length_history)
+    plt.legend("Mean Winrate", "Mean Length of Episodes")
     plt.grid()
-    plt.savefig("performance_plot.png")
+    plt.savefig("training_performance_plot.png")
     plt.close()
 
 
