@@ -84,11 +84,11 @@ for it in range(num_iterations):
             plt.savefig("training_performance_plot.png")
             plt.close()
     
-#    # Saving Model
-#    if it % 5 == 0:
-#        print("Saving -----------------------------------------------")
-#        player.store_model(player.policy)
-#        player.load_model()
+    # Saving Model
+    if it % 5 == 0:
+        print("Saving -----------------------------------------------")
+        player.store_model(player.policy)
+        player.load_model()
     
     # PPO Update
     print("Updating ---------------------------------------------")
