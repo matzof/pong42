@@ -85,8 +85,6 @@ for it in range(num_episodes):
 
         print('V3 - Iteration %d -- Loss: %.3f' % (it, loss))
         
-    if it % 5 == 0:
-        torch.save(policy.state_dict(), 'params.ckpt')
 
 env.close()
 
