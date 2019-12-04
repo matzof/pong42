@@ -76,7 +76,7 @@ for it in range(num_iterations):
             mean_winrate_history.append(100*sum(win_history)/len(win_history))
             mean_length_history.append(0.2*sum(length_history)/len(length_history))
             plt.figure(figsize=(20.0, 10.0))
-            plt.xlabel("Number of Iterations (1 iteration is 200 episodes)", fontsize=30)
+            plt.xlabel("Number of Iterations*10", fontsize=30)
             plt.plot(mean_winrate_history)
             plt.plot(mean_length_history)
             plt.legend(["Mean Winrate", "Mean Length of Episodes (divided by 5)"], fontsize ='xx-large')
