@@ -115,9 +115,10 @@ class Agent42(object):
             advantages = batch_rewards - values.detach()
             surr1 =  ratios * advantages
             surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
-            loss = (-torch.min(surr1, surr2) 
+            
+            loss = (-torch.min(surr1, surr2).mean()
                     + 0.5 * self.MseLoss(values.squeeze(1), batch_rewards) 
-                    - 0.01 * dist_entropy)
+                    - 0.01 * dist_entropy.mean())
             
             # Take gradient step to update network parameters 
             self.optimizer.zero_grad()
