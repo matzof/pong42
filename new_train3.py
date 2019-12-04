@@ -19,14 +19,16 @@ opponent = SimpleAi(env, opponent_id)
 player = Agent42(env, player_id)
 policy = Policy()
 
+num_episodes = 1000000
 K_epochs = 5
+horizon = 2000 
 opt = torch.optim.Adam(policy.parameters(), lr=1e-3)
 
 reward_sum_running_avg = None
 
-for it in range(100000):
+for it in range(num_episodes):
     d_obs_history, action_history, action_prob_history, reward_history = [], [], [], []
-    for ep in range(200):
+    for ep in range(horizon):
         (ob1, ob2), prev_obs = env.reset(), None
         for t in range(190000):
             #env.render()
@@ -81,7 +83,7 @@ for it in range(100000):
         loss.backward()
         opt.step()
 
-        print('Iteration %d -- Loss: %.3f' % (it, loss))
+        print('V3 - Iteration %d -- Loss: %.3f' % (it, loss))
         
     if it % 5 == 0:
         torch.save(policy.state_dict(), 'params.ckpt')
