@@ -79,8 +79,8 @@ for it in range(100000):
         opt.step()
     
         print('Iteration %d -- Loss: %.3f' % (it, loss))
-    if it % 5 == 0:
-        torch.save(policy.state_dict(), 'params.ckpt')
+    # if it % 5 == 0:
+    #     torch.save(policy.state_dict(), 'params.ckpt')
 
 env.close()
 
