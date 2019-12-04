@@ -1,4 +1,4 @@
-# PPO5: use one single forward fucntion, one less hidden fc than PPO4
+# advantage function with only discournted rewards
 
 import numpy as np
 import torch
@@ -116,7 +116,7 @@ class Agent42(object):
             
             loss = (-torch.min(surr1, surr2).mean())
                     # + 0.5 * self.MseLoss(values.squeeze(1), batch_rewards) 
-                    # - 0.01 * dist_entropy.mean())s
+                    # - 0.01 * dist_entropy.mean())
             
             # Take gradient step to update network parameters 
             self.optimizer.zero_grad()
