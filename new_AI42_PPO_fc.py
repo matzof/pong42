@@ -122,8 +122,8 @@ class Agent42(object):
             
             # Take gradient step to update network parameters 
             self.optimizer.zero_grad()
-            loss.mean().backward()
-            print('Loss:', loss.mean())
+            loss.backward()
+            print('Loss:', loss)
             self.optimizer.step()
 
         # Copy new weights into old policy:
