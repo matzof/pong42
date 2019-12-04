@@ -1,6 +1,6 @@
 import gym
 
-from new_AI42_PPO_fc_logits import Agent42
+from working_AI42_PPO import Agent42
 from wimblepong.simple_ai import SimpleAi
 import matplotlib.pyplot as plt
 #%%
