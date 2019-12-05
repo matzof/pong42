@@ -1,10 +1,11 @@
 import gym
 
-from working_AI42_PPO import Agent42
+from cheating_AI42_PPO import Agent42
 from wimblepong.simple_ai import SimpleAi
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import numpy as np
 #%%
 env = gym.make("WimblepongVisualMultiplayer-v0")
 #%%
@@ -68,6 +69,7 @@ for it in range(num_iterations):
         print("Iter:", it, "Ep:", ep, "Length ep:", length_ep, 
               "Victory: {:.0f}".format((rew1+10)/20),
               "Mean Length: {:.1f}".format(sum(length_history)/len(length_history)),
+              "Mean Action: {:.2f}".format(np.mean(np.asarray(player.actions))),
               "Winrate: {:.1f}%".format(100*sum(win_history)/len(win_history)))
         length_ep = 0
         
