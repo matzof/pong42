@@ -53,7 +53,7 @@ for it in range(num_iterations):
             
             state = player.extract_state_cheating()
             pos_diff = state[2] - state[0]
-            rew1 = (1 - pos_diff)**4
+            rew1 = ((1 - pos_diff)**2)/20
             reward_history.append(rew1)
             
             # Store the results (reward and done) of the step performed
