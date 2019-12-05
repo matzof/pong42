@@ -20,6 +20,9 @@ class Policy(torch.nn.Module):
         self.fc1 = nn.Linear(self.input_size, hidden)
         self.fc2_action = nn.Linear(hidden, action_space)
         self.fc2_value = nn.Linear(hidden, 1)
+        torch.nn.init.normal_(self.fc1.weight, 0, 1e-3)
+        torch.nn.init.normal_(self.fc2_action.weight, 0, 1e-3)
+        torch.nn.init.normal_(self.fc2_value.weight, 0, 1e-3)
         
     def forward(self, x):
 #        x = F.relu(self.conv1(x))
