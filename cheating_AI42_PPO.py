@@ -20,9 +20,9 @@ class Policy(torch.nn.Module):
         self.fc1 = nn.Linear(self.input_size, hidden)
         self.fc2_action = nn.Linear(hidden, action_space)
         self.fc2_value = nn.Linear(hidden, 1)
-        torch.nn.init.normal(self.fc1.weight, 0, 1e-3)
-        torch.nn.init.normal(self.fc2_action.weight, 0, 1e-3)
-        torch.nn.init.normal(self.fc2_value.weight, 0, 1e-3)
+        torch.nn.init.normal_(self.fc1.weight, 0, 1e-3)
+        torch.nn.init.normal_(self.fc2_action.weight, 0, 1e-3)
+        torch.nn.init.normal_(self.fc2_value.weight, 0, 1e-3)
         
     def forward(self, x):
 #        x = F.relu(self.conv1(x))
@@ -49,10 +49,10 @@ class Agent42(object):
         self.policy_old = self.policy.to(self.train_device)
         self.policy_old.load_state_dict(self.policy.state_dict()) 
         self.optimizer = torch.optim.Adam(self.policy.parameters(), 
-                                          lr=3e-4, betas=(0.9,0.999))
+                                          lr=1e-4, betas=(0.9,0.999))
         self.gamma = 0.99
         self.eps_clip = 0.2  # TODO: Clip parameter for PPO
-        self.K_epochs = 5 # TODO: Update policy for K epochs
+        self.K_epochs = 10 # TODO: Update policy for K epochs
         self.actions = []
         self.states = []
         self.action_probs = []
@@ -189,14 +189,17 @@ class Agent42(object):
         opponent = self.env.player2 if self.player_id == 1 else self.env.player1
         # Get the state from the environment
         state = [player.y, self.env.ball.x, self.env.ball.y, opponent.y]
+        print("Player", player.y)
+        print("Ball", self.env.ball.x, self.env.ball.y)
+        print("Opponent", player.x)
         return np.asarray(state)/225
             
-#    def store_model(self, policy):
-#        torch.save(policy, 'model.pth.tar')
+#    def store_model(self):
+#        torch.save(self.policy.state_dict(), 'model.mdl')
 #    
-#    def load_model(self, policy):
-#        policy = torch.load('model.pth.tar')
-#        return policy
+#    def load_model(self):
+#        weights = torch.load("model.mdl")
+#        self.policy.load_state_dict(weights, strict=False)
         
 
 

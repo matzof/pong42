@@ -10,7 +10,7 @@ import numpy as np
 env = gym.make("WimblepongVisualMultiplayer-v0")
 #%%
 # Parameters
-render = False
+render = True
 num_iterations = 100000
 
 # Define the player IDs for both SimpleAI agents
@@ -27,11 +27,12 @@ win1 = 0
 culmulative_reward = 0
 length_history = []
 win_history = []
+reward_history = []
 mean_winrate_history = []
 mean_length_history = []
 
 for it in range(num_iterations):
-    for ep in range(200):
+    for ep in range(20):
         done = False
         length_ep = 0
     
@@ -47,7 +48,14 @@ for it in range(num_iterations):
     
             # Step the environment and get the rewards and new observations
             (ob1, ob2), (rew1, rew2), done, info = env.step((action1, action2))
-    
+            
+            win1 = 1 if rew1==10 else 0
+            
+            state = player.extract_state_cheating()
+            pos_diff = state[2] - state[0]
+            rew1 = ((1 - pos_diff)**2)/20
+            reward_history.append(rew1)
+            
             # Store the results (reward and done) of the step performed
             player.store_result(rew1, done)
     
@@ -59,15 +67,15 @@ for it in range(num_iterations):
                 env.render()                   
     
         # when done:
-        win_history.append(1 if rew1==10 else 0)
+        win_history.append(win1)
         length_history.append(length_ep)
         
         if len(win_history) == 500:
             length_history.pop(0)
             win_history.pop(0)
         
-        print("Iter:", it, "Ep:", ep, "Length ep:", length_ep, 
-              "Victory: {:.0f}".format((rew1+10)/20),
+        print("Iter:", it, "Ep:", ep, "Length ep:", length_ep, "Victory:", win1,
+              "Mean Reward: {:.1f}".format(sum(reward_history)/len(reward_history)), 
               "Mean Length: {:.1f}".format(sum(length_history)/len(length_history)),
               "Mean Action: {:.2f}".format(np.mean(np.asarray(player.actions))),
               "Winrate: {:.1f}%".format(100*sum(win_history)/len(win_history)))
@@ -86,11 +94,11 @@ for it in range(num_iterations):
             plt.savefig("training_performance_plot.png")
             plt.close()
     
-#    # Saving Model
-#    if it % 300 == 0:
-#        print("Saving -----------------------------------------------")
-#        player.store_model(player.policy)
-#        player.policy = player.load_model(player.policy)
+    # Saving Model
+    if it % 5 == 0:
+        print("Saving -----------------------------------------------")
+        player.store_model(player.policy)
+        player.policy = player.load_model(player.policy)
     
     # PPO Update
     print("Updating ---------------------------------------------")

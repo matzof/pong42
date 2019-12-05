@@ -173,12 +173,8 @@ class Agent42(object):
         self.action_probs.append(action_prob)
         self.actions.append(action)
     
-    def store_result(self, reward, done):
-        reward = reward/10 # normalize reward to 1 or -1
-        self.rewards.append(reward)
-        self.dones.append(done)
-        if done == 1:
-            self.reset()
+    def store_model(self):
+        torch.save(self.policy.state_dict(), 'model.mdl')
     
     def store_model(self, it):
         torch.save(self.policy.state_dict(), "model_%s.mdl" % (it))
