@@ -1,4 +1,4 @@
-# PPO: use one single forward fucntion, one less hidden fc than PPO4
+# PPO: use old_policy in get_action
 
 import numpy as np
 import torch
@@ -138,7 +138,7 @@ class Agent42(object):
             observation = self.preprocess_observation(observation)
             stack_ob = self.stack_obs(observation)
             # Pass state x through the actor network 
-            action_logits, _ = self.policy.forward(stack_ob)
+            action_logits, _ = self.policy_old.forward(stack_ob)
             action_distribution = Categorical(logits = action_logits)
     
             action = action_distribution.sample().cpu()[0].int()
@@ -180,11 +180,12 @@ class Agent42(object):
         if done == 1:
             self.reset()
     
+    def store_model(self):
+        torch.save(self.policy.state_dict(), "model.mdl")
+    
     def load_model(self):
-        weights = torch.load("model.mdl")
-        self.policy.load_state_dict(weights, strict=False)
-
-
+        policy = self.policy.load_state_dict(torch.load("model.mdl"))
+        return policy
 
 
 

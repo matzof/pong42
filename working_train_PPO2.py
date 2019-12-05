@@ -5,9 +5,9 @@ from wimblepong.simple_ai import SimpleAi
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-#%%
+
 env = gym.make("WimblepongVisualMultiplayer-v0")
-#%%
+
 # Parameters
 render = False
 num_iterations = 100000
@@ -83,7 +83,12 @@ for it in range(num_iterations):
             plt.grid()
             plt.savefig("training_performance_plot.png")
             plt.close()
-
+            
+    
+    # Saving Model
+    if it % 300 == 0:
+        print("Saving -----------------------------------------------")
+        player.store_model()
     
     # PPO Update
     print("Updating ---------------------------------------------")
