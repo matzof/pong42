@@ -8,7 +8,7 @@ from torch.distributions.categorical import Categorical
 import random
 
 class Policy(torch.nn.Module):
-    def __init__(self, action_space = 2, hidden = 64):
+    def __init__(self, action_space = 2, hidden = 512):
         super().__init__()
         self.action_space = action_space
         self.hidden = hidden
@@ -49,10 +49,10 @@ class Agent42(object):
         self.policy_old = self.policy.to(self.train_device)
         self.policy_old.load_state_dict(self.policy.state_dict()) 
         self.optimizer = torch.optim.Adam(self.policy.parameters(), 
-                                          lr=1e-3, betas=(0.9,0.999))
+                                          lr=1e-4, betas=(0.9,0.999))
         self.gamma = 0.99
         self.eps_clip = 0.2  # TODO: Clip parameter for PPO
-        self.K_epochs = 20 # TODO: Update policy for K epochs
+        self.K_epochs = 10 # TODO: Update policy for K epochs
         self.actions = []
         self.states = []
         self.action_probs = []
@@ -119,9 +119,9 @@ class Agent42(object):
             surr1 =  ratios * advantages
             surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
             
-            loss = torch.min(surr1, surr2).mean()
-#                    + 0.5 * self.MseLoss(values.squeeze(1), old_rewards) 
-#                    - 0.01 * dist_entropy.mean())
+            loss = (-torch.min(surr1, surr2).mean()
+                    + 0.5 * self.MseLoss(values.squeeze(1), old_rewards) 
+                    - 0.01 * dist_entropy.mean())
             
             # Take gradient step to update network parameters 
             loss.backward()
