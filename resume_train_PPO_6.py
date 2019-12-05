@@ -75,7 +75,7 @@ for it in range(num_iterations):
     # Saving Model
     if it % 1 == 0:
         print("Saving -----------------------------------------------")
-        player.store_model(it)
+        player.store_model(it % 20)
 
     # Plot Mean Reward History
     mean_winrate_history.append(100*sum(win_history)/len(win_history))

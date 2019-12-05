@@ -17,6 +17,7 @@ player_id = 1
 opponent_id = 3 - player_id
 opponent = SimpleAi(env, opponent_id)
 player = Agent42(env, player_id)
+player.load_model()
 
 # Set the names for both SimpleAIs
 env.set_names(player.get_name(), opponent.get_name())
@@ -74,7 +75,7 @@ for it in range(num_iterations):
     # Saving Model
     if it % 1 == 0:
         print("Saving -----------------------------------------------")
-        player.store_model(it)
+        player.store_model(it % 20)
 
     # Plot Mean Reward History
     mean_winrate_history.append(100*sum(win_history)/len(win_history))
