@@ -85,7 +85,7 @@ for it in range(num_iterations):
     plt.plot(mean_length_history)
     plt.legend(["Mean Winrate", "Mean Length of Episodes (divided by 5)"], fontsize ='xx-large')
     plt.grid()
-    plt.savefig("plots/" + str(plot_count) + "training_performance_plot.png")
+    plt.savefig("plots/" + str(it) + "training_performance_plot.png")
     plt.close()
     
     # PPO Update
