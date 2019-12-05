@@ -189,14 +189,17 @@ class Agent42(object):
         opponent = self.env.player2 if self.player_id == 1 else self.env.player1
         # Get the state from the environment
         state = [player.y, self.env.ball.x, self.env.ball.y, opponent.y]
+        print("Player", player.y)
+        print("Ball", self.env.ball.x, self.env.ball.y)
+        print("Opponent", player.x)
         return np.asarray(state)/225
             
-#    def store_model(self, policy):
-#        torch.save(policy, 'model.pth.tar')
+#    def store_model(self):
+#        torch.save(self.policy.state_dict(), 'model.mdl')
 #    
-#    def load_model(self, policy):
-#        policy = torch.load('model.pth.tar')
-#        return policy
+#    def load_model(self):
+#        weights = torch.load("model.mdl")
+#        self.policy.load_state_dict(weights, strict=False)
         
 
 

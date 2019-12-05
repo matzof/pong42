@@ -10,7 +10,7 @@ import numpy as np
 env = gym.make("WimblepongVisualMultiplayer-v0")
 #%%
 # Parameters
-render = False
+render = True
 num_iterations = 100000
 
 # Define the player IDs for both SimpleAI agents
@@ -94,11 +94,11 @@ for it in range(num_iterations):
             plt.savefig("training_performance_plot.png")
             plt.close()
     
-#    # Saving Model
-#    if it % 300 == 0:
-#        print("Saving -----------------------------------------------")
-#        player.store_model(player.policy)
-#        player.policy = player.load_model(player.policy)
+    # Saving Model
+    if it % 5 == 0:
+        print("Saving -----------------------------------------------")
+        player.store_model(player.policy)
+        player.policy = player.load_model(player.policy)
     
     # PPO Update
     print("Updating ---------------------------------------------")
