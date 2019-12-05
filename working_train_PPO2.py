@@ -86,7 +86,7 @@ for it in range(num_iterations):
             
     
     # Saving Model
-    if it % 300 == 0:
+    if it % 1 == 0:
         print("Saving -----------------------------------------------")
         player.store_model(it)
     
