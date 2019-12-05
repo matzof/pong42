@@ -180,8 +180,8 @@ class Agent42(object):
         if done == 1:
             self.reset()
     
-    def store_model(self):
-        torch.save(self.policy.state_dict(), "model.mdl")
+    def store_model(self, it):
+        torch.save(self.policy.state_dict(), "model_%s.mdl" % (it))
     
     def load_model(self):
         policy = self.policy.load_state_dict(torch.load("model.mdl"))

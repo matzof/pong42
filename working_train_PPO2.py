@@ -1,6 +1,6 @@
 import gym
 
-from working_AI42_PPO import Agent42
+from working_AI42_PPO2 import Agent42
 from wimblepong.simple_ai import SimpleAi
 import matplotlib
 matplotlib.use('Agg')
@@ -88,7 +88,7 @@ for it in range(num_iterations):
     # Saving Model
     if it % 300 == 0:
         print("Saving -----------------------------------------------")
-        player.store_model()
+        player.store_model(it)
     
     # PPO Update
     print("Updating ---------------------------------------------")
