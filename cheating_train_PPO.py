@@ -51,8 +51,8 @@ for it in range(num_iterations):
             win1 = 1 if rew1==10 else 0
             
             state = player.extract_state_cheating()
-            pos_diff = state[2] - state[0] + 0.02
-            rew1 = 1 - pos_diff
+            pos_diff = state[2] - state[0]
+            rew1 = (1 - pos_diff)**4
             
             # Store the results (reward and done) of the step performed
             player.store_result(rew1, done)
