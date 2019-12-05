@@ -72,7 +72,8 @@ for it in range(num_iterations):
             length_history.pop(0)
             win_history.pop(0)
         
-        print("Iter:", it, "Ep:", ep, "Length ep:", length_ep, "Victory:", win1,
+        print("Iter:", it, "Ep:", ep, "Reward:", rew1, "Length ep:", length_ep,
+              "Victory:", win1,
               "Mean Length: {:.1f}".format(sum(length_history)/len(length_history)),
               "Mean Action: {:.2f}".format(np.mean(np.asarray(player.actions))),
               "Winrate: {:.1f}%".format(100*sum(win_history)/len(win_history)))
