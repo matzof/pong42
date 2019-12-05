@@ -180,8 +180,8 @@ class Agent42(object):
         if done == 1:
             self.reset()
             
-    def store_model(self):
-        torch.save(self.policy.state_dict(), 'model.mdl')
+    def store_model(self, iteration):
+        torch.save(self.policy.state_dict(), str(iteration) + 'model.mdl')
     
     def load_model(self):
         weights = torch.load("model.mdl")

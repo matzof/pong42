@@ -85,9 +85,9 @@ for it in range(num_iterations):
             plt.close()
     
     # Saving Model
-    if it % 5 == 0:
+    if it % 1 == 0:
         print("Saving -----------------------------------------------")
-        player.store_model()
+        player.store_model(it)
     
     # PPO Update
     print("Updating ---------------------------------------------")
