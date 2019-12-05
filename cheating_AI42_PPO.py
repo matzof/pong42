@@ -8,7 +8,7 @@ from torch.distributions.categorical import Categorical
 import random
 
 class Policy(torch.nn.Module):
-    def __init__(self, action_space = 2, hidden = 2):
+    def __init__(self, action_space = 2, hidden = 64):
         super().__init__()
         self.action_space = action_space
         self.hidden = hidden
@@ -52,7 +52,7 @@ class Agent42(object):
                                           lr=1e-2, betas=(0.9,0.999))
         self.gamma = 0.99
         self.eps_clip = 0.2  # TODO: Clip parameter for PPO
-        self.K_epochs = 10 # TODO: Update policy for K epochs
+        self.K_epochs = 20 # TODO: Update policy for K epochs
         self.actions = []
         self.states = []
         self.action_probs = []

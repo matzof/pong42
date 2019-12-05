@@ -27,6 +27,7 @@ win1 = 0
 culmulative_reward = 0
 length_history = []
 win_history = []
+reward_history = []
 mean_winrate_history = []
 mean_length_history = []
 
@@ -53,6 +54,7 @@ for it in range(num_iterations):
             state = player.extract_state_cheating()
             pos_diff = state[2] - state[0]
             rew1 = (1 - pos_diff)**4
+            reward_history.append(rew1)
             
             # Store the results (reward and done) of the step performed
             player.store_result(rew1, done)
@@ -72,8 +74,8 @@ for it in range(num_iterations):
             length_history.pop(0)
             win_history.pop(0)
         
-        print("Iter:", it, "Ep:", ep, "Reward: {:.2f}".format(rew1), 
-              "Length ep:", length_ep, "Victory:", win1,
+        print("Iter:", it, "Ep:", ep, "Length ep:", length_ep, "Victory:", win1,
+              "Mean Reward: {:.1f}".format(sum(reward_history)/len(reward_history)), 
               "Mean Length: {:.1f}".format(sum(length_history)/len(length_history)),
               "Mean Action: {:.2f}".format(np.mean(np.asarray(player.actions))),
               "Winrate: {:.1f}%".format(100*sum(win_history)/len(win_history)))
