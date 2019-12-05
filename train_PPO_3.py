@@ -1,6 +1,6 @@
 import gym
 
-from working_AI42_PPO import Agent42
+from AI42_PPO_3 import Agent42
 from wimblepong.simple_ai import SimpleAi
 import matplotlib
 matplotlib.use('Agg')
