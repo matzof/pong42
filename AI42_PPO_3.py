@@ -49,10 +49,10 @@ class Agent42(object):
         self.policy_old = self.policy.to(self.train_device)
         self.policy_old.load_state_dict(self.policy.state_dict()) 
         self.optimizer = torch.optim.Adam(self.policy.parameters(), 
-                                          lr=1e-3, betas=(0.9,0.999))
+                                          lr=3e-4, betas=(0.9,0.999))
         self.gamma = 0.99
-        self.eps_clip = 0.2  # TODO: Clip parameter for PPO
-        self.K_epochs = 5 # TODO: Update policy for K epochs
+        self.eps_clip = 0.1  # TODO: Clip parameter for PPO
+        self.K_epochs = 12 # TODO: Update policy for K epochs
         self.actions = []
         self.states = []
         self.action_probs = []
@@ -88,7 +88,7 @@ class Agent42(object):
         for _ in range(self.K_epochs):
             # sample a random 50% of the data stored in every epoch
             len_history = len(self.actions)
-            n_batch = round(len_history*0.7)
+            n_batch = round(len_history*0.3)
             idxs = random.sample(range(len_history), n_batch)
             
             old_rewards = torch.tensor([rewards[idx] for idx in idxs]).to(self.train_device)
@@ -121,7 +121,7 @@ class Agent42(object):
             
             loss = (-torch.min(surr1, surr2).mean()
                     + 0.5 * self.MseLoss(values.squeeze(1), old_rewards) 
-                    - 0.01 * dist_entropy.mean())
+                    - 0.005 * dist_entropy.mean())
             
             # Take gradient step to update network parameters 
             loss.backward()
