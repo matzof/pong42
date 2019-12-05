@@ -16,7 +16,7 @@ class Policy(torch.nn.Module):
 #        self.conv2 = torch.nn.Conv2d(32, 64, 4, 2)
 #        self.conv3 = torch.nn.Conv2d(64, 64, 3, 1)
 #        self.reshaped_size = 64*9*9
-        self.input_size = 20000
+        self.input_size = 8978
         self.fc1 = nn.Linear(self.input_size, hidden)
         self.fc2_action = nn.Linear(hidden, action_space)
         self.fc2_value = nn.Linear(hidden, 1)
