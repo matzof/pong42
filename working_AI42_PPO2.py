@@ -179,14 +179,10 @@ class Agent42(object):
         self.dones.append(done)
         if done == 1:
             self.reset()
-            
-    def store_model(self, policy):
-        torch.save(policy, 'model.pth.tar')
     
-    def load_model(self, policy):
-        policy = torch.load('model.pth.tar')
-        return policy
-        
+    def load_model(self):
+        weights = torch.load("model.mdl")
+        self.policy.load_state_dict(weights, strict=False)
 
 
 
