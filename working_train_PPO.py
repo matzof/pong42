@@ -88,7 +88,6 @@ for it in range(num_iterations):
     if it % 5 == 0:
         print("Saving -----------------------------------------------")
         player.store_model()
-        player.policy = player.load_model()
     
     # PPO Update
     print("Updating ---------------------------------------------")
