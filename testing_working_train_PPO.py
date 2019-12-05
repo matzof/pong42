@@ -30,7 +30,7 @@ mean_winrate_history = []
 mean_length_history = []
 
 for it in range(num_iterations):
-    for ep in range(200):
+    for ep in range(250):
         done = False
         length_ep = 0
     
