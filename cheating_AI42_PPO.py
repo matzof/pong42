@@ -1,4 +1,4 @@
-# PPO: use one single forward fucntion, one less hidden fc than PPO4
+# PPO5: use one single forward fucntion, one less hidden fc than PPO4
 
 import numpy as np
 import torch
@@ -16,10 +16,13 @@ class Policy(torch.nn.Module):
 #        self.conv2 = torch.nn.Conv2d(32, 64, 4, 2)
 #        self.conv3 = torch.nn.Conv2d(64, 64, 3, 1)
 #        self.reshaped_size = 64*9*9
-        self.input_size = 20000
+        self.input_size = 8
         self.fc1 = nn.Linear(self.input_size, hidden)
         self.fc2_action = nn.Linear(hidden, action_space)
         self.fc2_value = nn.Linear(hidden, 1)
+        torch.nn.init.normal(self.fc1.weight, 0, 1e-3)
+        torch.nn.init.normal(self.fc2_action.weight, 0, 1e-3)
+        torch.nn.init.normal(self.fc2_value.weight, 0, 1e-3)
         
     def forward(self, x):
 #        x = F.relu(self.conv1(x))
@@ -46,7 +49,7 @@ class Agent42(object):
         self.policy_old = self.policy.to(self.train_device)
         self.policy_old.load_state_dict(self.policy.state_dict()) 
         self.optimizer = torch.optim.Adam(self.policy.parameters(), 
-                                          lr=1e-3, betas=(0.9,0.999))
+                                          lr=1e-4, betas=(0.9,0.999))
         self.gamma = 0.99
         self.eps_clip = 0.2  # TODO: Clip parameter for PPO
         self.K_epochs = 5 # TODO: Update policy for K epochs
@@ -135,7 +138,7 @@ class Agent42(object):
         with torch.no_grad():
             """ Interface function that returns the action that the agent 
             takes based on the observation """
-            observation = self.preprocess_observation(observation)
+            observation = self.extract_state_cheating()
             stack_ob = self.stack_obs(observation)
             # Pass state x through the actor network 
             action_logits, _ = self.policy.forward(stack_ob)
@@ -165,7 +168,7 @@ class Agent42(object):
         if self.prev_obs is None:
             self.prev_obs = obs
         stack_ob = np.concatenate((self.prev_obs, obs), axis=0)
-        stack_ob = torch.from_numpy(stack_ob).float().unsqueeze(0).to(self.train_device)
+        stack_ob = torch.from_numpy(stack_ob).unsqueeze(0).float().to(self.train_device)
         return stack_ob
     
     def store_transition(self, state, action_prob, action):
@@ -179,13 +182,21 @@ class Agent42(object):
         self.dones.append(done)
         if done == 1:
             self.reset()
-            
-    def store_model(self, policy):
-        torch.save(policy, 'model.pth.tar')
     
-    def load_model(self, policy):
-        policy = torch.load('model.pth.tar')
-        return policy
+    def extract_state_cheating(self):
+        # Get the player id from the environment
+        player = self.env.player1 if self.player_id == 1 else self.env.player2
+        opponent = self.env.player2 if self.player_id == 1 else self.env.player1
+        # Get the state from the environment
+        state = [player.y, self.env.ball.x, self.env.ball.y, opponent.y]
+        return np.asarray(state)/225
+            
+#    def store_model(self, policy):
+#        torch.save(policy, 'model.pth.tar')
+#    
+#    def load_model(self, policy):
+#        policy = torch.load('model.pth.tar')
+#        return policy
         
 
 
