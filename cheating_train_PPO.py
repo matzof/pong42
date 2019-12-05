@@ -10,7 +10,7 @@ import numpy as np
 env = gym.make("WimblepongVisualMultiplayer-v0")
 #%%
 # Parameters
-render = True
+render = False
 num_iterations = 100000
 
 # Define the player IDs for both SimpleAI agents
