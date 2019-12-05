@@ -29,8 +29,8 @@ win_history = []
 mean_winrate_history = []
 mean_length_history = []
 
-for it in range(num_iterations):
-    for ep in range(200):
+for it in range(num_iterations): 
+    for ep in range(200): # save the weights, plots and PPO update every 200 episodes
         done = False
         length_ep = 0
     
