@@ -16,7 +16,7 @@ num_iterations = 100000
 # Define the player IDs for both SimpleAI agents
 player_id = 1
 opponent_id = 3 - player_id
-opponent = SomeOtherAgent(env, opponent_id)
+opponent = SomeOtherAgent()
 player = Agent42(env, player_id)
 player.load_model("model_6.mdl")
 opponent.load_model("some_other_model.mdl")
