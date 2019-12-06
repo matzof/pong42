@@ -1,7 +1,7 @@
 import gym
 
 from AI42_PPO_4 import Agent42
-from some_agent import Agent as SomeAgent
+from AI42_PPO_6 import Agent
 from wimblepong.simple_ai import SimpleAi
 import matplotlib
 matplotlib.use('Agg')
@@ -16,10 +16,10 @@ num_iterations = 100000
 # Define the player IDs for both SimpleAI agents
 player_id = 1
 opponent_id = 3 - player_id
-opponent = SomeAgent()
+opponent = Agent(env, player_id)
 player = Agent42(env, player_id)
 player.load_model("model_4.mdl")
-opponent.load_model()
+opponent.load_model("model_6.mdl")
 
 # Set the names for both SimpleAIs
 env.set_names(player.get_name(), opponent.get_name())
