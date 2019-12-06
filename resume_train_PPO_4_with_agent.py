@@ -19,7 +19,7 @@ opponent_id = 3 - player_id
 opponent = SomeAgent()
 player = Agent42(env, player_id)
 player.load_model("model_4.mdl")
-opponent.load_model("some_model.mdl")
+opponent.load_model()
 
 # Set the names for both SimpleAIs
 env.set_names(player.get_name(), opponent.get_name())

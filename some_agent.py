@@ -27,7 +27,7 @@ class Agent(object):
         return "Some agent"
 
     def load_model(self):
-        weights = torch.load("some_models.mdl")
+        weights = torch.load("some_model.mdl")
         self.policy.load_state_dict(weights, strict=False)
 
     def preprocess(self, observation):
