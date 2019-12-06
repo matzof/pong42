@@ -186,8 +186,8 @@ class Agent42(object):
     def store_model(self, it):
         torch.save(self.policy.state_dict(), str(it) + 'model.mdl')
     
-    def load_model(self):
-        weights = torch.load("model.mdl")
+    def load_model(self, model_name):
+        weights = torch.load(model_name)
         self.policy.load_state_dict(weights, strict=False)
 
 
