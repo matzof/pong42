@@ -127,6 +127,8 @@ class Agent42(object):
             loss.backward()
             print('Loss:', loss)
             self.optimizer.step()
+            
+            old_rewards, old_states, old_action_probs, old_actions = [], [], [], []
 
         # Copy new weights into old policy:
         self.policy_old.load_state_dict(self.policy.state_dict())
