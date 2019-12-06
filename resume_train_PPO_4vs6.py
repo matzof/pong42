@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 env = gym.make("WimblepongVisualMultiplayer-v0")
 #%%
 # Parameters
-render = False
+render = True
 num_iterations = 100000
 
 # Define the player IDs for both SimpleAI agents
@@ -79,6 +79,7 @@ for it in range(num_iterations):
     if it % 1 == 0:
         print("Saving -----------------------------------------------")
         player.store_model(it % 20)
+        opponent.store_model((it % 20) + 20)
 
     # Plot Mean Reward History
     mean_winrate_history.append(100*sum(win_history)/len(win_history))
