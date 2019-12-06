@@ -52,6 +52,7 @@ for it in range(num_iterations):
     
             # Store the results (reward and done) of the step performed
             player.store_result(rew1, done)
+            opponent.store_result(rew2, done)
     
             # store total length of each episode
             length_ep += 1
