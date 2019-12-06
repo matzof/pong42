@@ -6,7 +6,7 @@ from some_model import PolicyConv
 
 class Agent(object):
     def __init__(self):
-        self.train_device = "cpu"
+        self.train_device = "cuda"
         self.policy = PolicyConv(3, 128).to(self.train_device)
         self.prev_obs = None
         self.policy.eval()
