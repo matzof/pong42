@@ -46,7 +46,7 @@ for it in range(num_iterations):
     
             # Get the actions from both AIs
             action1 = player.get_action(ob1)
-            action2 = opponent.get_action()
+            action2 = opponent.get_action(ob2)
     
             # Step the environment and get the rewards and new observations
             (ob1, ob2), (rew1, rew2), done, info = env.step((action1, action2))
