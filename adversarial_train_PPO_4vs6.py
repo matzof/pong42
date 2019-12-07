@@ -2,7 +2,6 @@ import gym
 
 from AI42_PPO_4 import Agent42
 from AI42_PPO_6 import Agent42 as Agent
-from wimblepong.simple_ai import SimpleAi
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -10,7 +9,7 @@ import matplotlib.pyplot as plt
 env = gym.make("WimblepongVisualMultiplayer-v0")
 #%%
 # Parameters
-render = True
+render = False
 num_iterations = 100000
 
 # Define the player IDs for both SimpleAI agents
