@@ -10,7 +10,7 @@ import numpy as np
 import argparse
 import wimblepong
 from PIL import Image
-from working_AI42_PPO import Agent42
+from agent import Agent
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--headless", action="store_true", help="Run in headless mode")
@@ -28,8 +28,8 @@ episodes = 100000
 # Define the player IDs for both SimpleAI agents
 player_id = 1
 opponent_id = 3 - player_id
-opponent = wimblepong.SimpleAi(env, opponent_id)
-player = Agent42(env, player_id)
+opponent = wimblepong.SimpleAi(env, player_id)
+player = Agent()
 player.load_model()
 
 # Set the names for both SimpleAIs
@@ -52,8 +52,8 @@ for i in range(0,episodes):
         # Count the wins
         if rew1 == 10:
             win1 += 1
-        if not args.headless:
-            env.render()
+#        if not args.headless:
+#            env.render()
         if done:
             observation= env.reset()
             print("episode {} over. Broken WR: {:.3f}".format(i, win1/(i+1)))

@@ -38,9 +38,7 @@ class Policy(torch.nn.Module):
 
     
 class Agent(object):
-    def __init__(self, env, player_id=1):
-        self.env = env
-        self.player_id = player_id # Set the player id that determines on which side the ai is going to play                        
+    def __init__(self):                
         self.name = "AI42"
         self.train_device = torch.device("cpu")
         self.policy = Policy().to(self.train_device)
