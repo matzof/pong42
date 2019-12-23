@@ -22,4 +22,4 @@ To train, simply run the file `train_PPO_4.py`.
 
 To test the trained `model.mdl` against SimpleAI, simply run the file `test_42pong_simpleai.py`. 
 
-The model named `model.mdl` has been trained against SimpleAI, while the model named `model_adversarial.mdl` has been trained in an adversarial way, against a really similar model, which was also being trained at the same time. Both of the models have been training for approximately a week.
+The model named `model.mdl` has been trained against SimpleAI (~80% winrate), while the model named `model_adversarial.mdl` has been trained in an adversarial way, against a really similar model, which was also being trained at the same time (~50% winrate). Both of the models have been training for approximately a week.
