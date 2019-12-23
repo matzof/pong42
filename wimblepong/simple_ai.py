@@ -11,7 +11,7 @@ class SimpleAi(object):
         self.player_id = player_id  
         # Ball prediction error, introduce noise such that SimpleAI reflects not
         # only in straight lines
-        self.bpe = 4                
+        self.bpe = 4            
         self.name = "SimpleAI"
 
     def get_name(self):

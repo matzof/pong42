@@ -1,5 +1,0 @@
-gym
-matplotlib
-numpy
-pillow
-opencv-python
